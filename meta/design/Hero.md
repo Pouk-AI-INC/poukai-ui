@@ -27,20 +27,36 @@ The text column is capped at --hero-max (38rem / 608px) on all viewport widths.
 - --fs-tagline-intimate — title font-size at size=intimate. 32-52px fluid. Added 2026-05-17.
 - --font-serif — title font family (both size values).
 - --fg — title color (both size values).
-- --space-6 — status to title gap (24px). Applies at all breakpoints.
-- --space-8 — title to lede gap on mobile; also lede to CTA gap on mobile.
-- --space-10 (fallback 2.5rem) — title to lede and lede to CTA gap on md+ (768px+).
+- --space-3 — status to title gap at size=intimate (12px). Added 2026-05-17.
+- --space-4 — title to lede gap on mobile at size=intimate (16px). Added 2026-05-17.
+- --space-6 — status to title gap at size=display (24px); also title to lede gap on md+ at size=intimate (24px).
+- --space-8 — title to lede gap on mobile at size=display; also lede to CTA gap on mobile (both size values).
+- --space-10 (fallback 2.5rem) — title to lede and lede to CTA gap on md+ at size=display; lede to CTA gap on md+ (both size values).
 - --hero-max — maximum width of the text column (38rem / 608px). Never overridden with a wider value.
 - --fs-body — lede font-size.
 - --fg-muted — lede color.
 
 ## 4. Layout and rhythm
 
-**Vertical rhythm (invariant across both size values):**
+**Vertical rhythm at size=display (default, unchanged):**
 
-- Status slot to Title: var(--space-6) (24px)
-- Title to Lede: var(--space-8) mobile; var(--space-10, 2.5rem) md+
-- Lede to CTA: var(--space-8) mobile; var(--space-10, 2.5rem) md+
+| Gap            | Mobile (<768px)     | Desktop (≥768px)             |
+| -------------- | ------------------- | ---------------------------- |
+| Status → Title | var(--space-6) 24px | var(--space-6) 24px          |
+| Title → Lede   | var(--space-8) 32px | var(--space-10, 2.5rem) 40px |
+| Lede → CTA     | var(--space-8) 32px | var(--space-10, 2.5rem) 40px |
+
+**Vertical rhythm at size=intimate (updated 2026-05-17):**
+
+| Gap            | Mobile (<768px)     | Desktop (≥768px)             |
+| -------------- | ------------------- | ---------------------------- |
+| Status → Title | var(--space-3) 12px | var(--space-3) 12px          |
+| Title → Lede   | var(--space-4) 16px | var(--space-6) 24px          |
+| Lede → CTA     | var(--space-8) 32px | var(--space-10, 2.5rem) 40px |
+
+Rationale for the two-rung status→title shrink at intimate: the eyebrow does label work for a softened title. Label-to-thing relationships read at ≤25% of the thing's vertical mass. --space-3 (12px) lands at 23% of the intimate-max title height (12/52px). The optical correction overrode the mechanical one-rung pattern — confirmed in live audit with Arian, 2026-05-17.
+
+The CTA gap is unchanged at intimate — live audit confirmed it reads correctly at that scale.
 
 **Title typography (invariant across both size values):**
 
@@ -75,7 +91,7 @@ None — static component. Motion owned by slotted components.
 ## 8. Prop intent
 
 - Consumers must be able to choose between display (default, var(--fs-tagline), 36-68px) and intimate (var(--fs-tagline-intimate), 32-52px) title registers.
-- Only the title font-size responds to size. All gaps, lede, CTA, em accent, color, and font family are invariant.
+- The size prop governs title font-size and the status→title and title→lede vertical gaps. The lede→CTA gap, lede font-size, em accent, color, and font family are invariant across size values.
 - The size prop is opt-in; every existing consumer without the prop gets display unchanged.
 - Consumers must be able to pass status, title (including em spans), lede, and CTA slots.
 - Consumers must be able to choose align=start (default) or align=center.
@@ -93,3 +109,4 @@ None — static component. Motion owned by slotted components.
 - More than two size values (YAGNI; add on demand).
 - Background or surface variants (Hero always sits on --bg).
 - Responsive align switching.
+- Note: the original #39 spec locked vertical rhythm as invariant across both size values. That lock was explicitly reversed after a live audit with Arian on 2026-05-17 (GitHub issue #44). The status→title and title→lede gaps now scale with size as documented in Section 4.

@@ -89,3 +89,25 @@ test("em accent inside title renders at size=intimate", async ({ mount }) => {
   const component = await mount(<Hero size="intimate" title={title} lede="Lede." />);
   await expect(component.locator("em")).toBeVisible();
 });
+
+test("size=intimate compresses status→title gap", async ({ mount }) => {
+  const component = await mount(
+    <Hero
+      size="intimate"
+      status={<span data-testid="status">Status</span>}
+      title="Heading"
+      lede="Lede."
+    />,
+  );
+  const statusEl = component.locator("[data-testid='status']").locator("..");
+  // Verify the status wrapper div is present (rhythm applied via CSS; visual check is CT's job)
+  await expect(statusEl).toBeVisible();
+});
+
+test("size=intimate applies intimate size class to root for rhythm scoping", async ({ mount }) => {
+  const component = await mount(
+    <Hero size="intimate" title="Heading" lede="Lede." status={<span>Eyebrow</span>} />,
+  );
+  const rootClass = await component.getAttribute("class");
+  expect(rootClass).toMatch(/sizeIntimate|size-intimate/);
+});

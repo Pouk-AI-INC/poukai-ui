@@ -58,6 +58,17 @@
   }
 }
 
+.size-intimate .status {
+  margin-bottom: var(--space-3);
+}
+
 .size-intimate .title {
   font-size: var(--fs-tagline-intimate);
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .size-intimate .title {
+    margin-bottom: var(--space-6);
+  }
 }
