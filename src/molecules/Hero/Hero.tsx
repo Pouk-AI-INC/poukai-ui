@@ -21,7 +21,7 @@ export interface HeroProps extends Omit<ComponentPropsWithoutRef<"section">, "ti
   /**
    * Title font-size register. display (default) uses --fs-tagline (36-68 px).
    * intimate uses --fs-tagline-intimate (32-52 px) — quieter register for
-   * low-density doorway pages. All other rhythm, color, and font-family are unchanged.
+   * low-density doorway pages. At `intimate`, vertical gaps between status, title, and lede also compress proportionally.
    */
   size?: HeroSize;
 }
