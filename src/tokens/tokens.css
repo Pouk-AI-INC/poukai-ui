@@ -59,6 +59,11 @@
   --accent: #0071e3; /* status dot, link underline-on-hover, focus ring */
   --accent-glow: rgba(0, 113, 227, 0.18);
 
+  /* ---------- Warm accent (editorial band) ---------- */
+  --bg-warm-accent: #c0452c; /* editorial band bg — see meta/brand.md for restraint rules */
+  --fg-on-warm: #fdf5f0; /* primary text on warm band — warm-tinted near-white */
+  --fg-on-warm-muted: #f5ddd0; /* supporting text on warm band — see brand.md for ceiling */
+
   /* ---------- Typography ---------- */
   --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
   --font-sans:
