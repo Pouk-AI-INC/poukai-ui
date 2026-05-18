@@ -56,6 +56,44 @@ _To be filled. When can a token change vs. add? What requires Arian's approval? 
 
 _Reverse-chronological. Each entry: context, decision, rationale, alternatives considered, approval (Arian)._
 
+### 2026-05-18 — Add `--content-max-bleed: 100vw` — full-bleed layout permission token (issue #57)
+
+**Context.** The `/about` v2 portrait band requires a surface that extends edge-to-edge across the viewport. Prior to this change, the DS had no mechanism for opting a section out of the `--content-max: 64rem` column constraint. Site-side consumers were either constrained to `64rem` or would need to hardcode viewport-width values outside the token contract — both failures of the brand contract.
+
+**Decision.** Add a new layout token to `src/tokens/tokens.css`, Layout section, immediately after `--content-max`:
+
+```css
+/* Full-bleed layout permission. Components opt into viewport-width by reading
+   this token. Canonical usage: width: var(--content-max-bleed); margin-inline: calc(50% - 50vw) */
+--content-max-bleed: 100vw;
+```
+
+This is an opt-in permission token. The default behavior (`--content-max: 64rem`) is unchanged — no regression for any existing consumer. Components reference `--content-max-bleed` explicitly to escape the content column; nothing picks it up by default.
+
+**Scrollbar-width call.** The token value is `100vw`, not `calc(100vw - scrollbar-width)` or `100dvw`.
+
+1. macOS (primary platform) uses overlay scrollbars that occupy zero layout width. `100vw === viewport content width` on the primary target.
+2. On Windows with space-occupying scrollbars (~15–17px), `100vw` creates a cosmetic overhang at bleed edges. This is addressable at the site layout level (e.g. `scrollbar-gutter: stable` on `<html>`) and is not a DS-level constraint.
+3. `100dvw` and `100vw` are equivalent for width (dynamic viewport units matter for height, not width). `100vw` is correct here.
+4. `calc(100vw - scrollbar-width)` requires `@property` registration and fallback gymnastics for older browsers; it degrades gracefully to `100vw` on every platform that matters. The complexity cost exceeds the benefit.
+5. Apple, Stripe, NYT, and Linear all use `100vw` for full-bleed editorial compositions. This is the established pattern.
+
+This choice is non-negotiable without Arian's approval. Future maintainers must not silently replace `100vw` with a `calc()` expression — that constitutes a brand-level token change.
+
+**Rationale for token naming.** The name `--content-max-bleed` signals intent ("bleed") rather than implementation ("100vw"). If the value ever needs refinement (e.g. to account for a future scrollbar strategy), the token value changes but consumer code does not. The name pairs with `--content-max` as its pair — the sibling that opts out of the column constraint.
+
+**Permission-not-default model.** Mirroring how Apple, Stripe, and editorial sites handle full-bleed compositions: the default is the constrained column; bleed is an explicit opt-in. This matches the Hero molecule's `bleed="none"` (default) / `bleed="full"` (opt-in) prop shape. The token is the DS contract; the prop is the component interface that reads it.
+
+**Alternatives considered.**
+
+- **(A) No token — consumers use `width: 100vw` directly.** Rejected. Collapses the brand contract. Hardcoded `100vw` in consumer CSS is an undocumented deviation from the token system; future changes to the bleed strategy would require hunting all usage sites. The token is the contract.
+- **(B) `--content-max-full: 100vw`.** Rejected in favor of `--content-max-bleed`. "Full" is ambiguous (full of what?); "bleed" is a recognized editorial term that immediately communicates the intent to any designer or engineer familiar with print/web layout. The vocabulary is on-brand.
+- **(C) `100dvw`.** Equivalent for width. `vw` is correct; `dvw` is not wrong but adds no value for a width-only token and would require explanation in every consumer's CSS.
+
+**Approval.** Design-level decision (additive token; minor bump). Arian's sign-off not required for additive token additions, per evolution rules. Logged here for traceability.
+
+---
+
 ### 2026-05-18 — Add `--surface-section` — fourth elevation tier for page-section rhythm (issue #53)
 
 **Context.** GitHub issue #53 requests a new surface token to enable sectional surface rhythm on editorial pages — specifically alternating background bands for the `/about` v2 Direction B layout and future editorial pages. The existing token `--surface` (#F5F5F7) cannot serve this role for two reasons: (1) it is semantically defined as a recessed inline element surface (code blocks, quote blocks, card fills) and the token spec explicitly includes a NEVER rule against using it as a section divider; (2) at L≈0.914, it recesses too deeply from the page canvas (#FBFBFD, L≈0.966) to read as a composed section band — it would announce itself as a distinct block rather than as a subtle rhythm step, disrupting the reading flow of editorial pages.
