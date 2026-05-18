@@ -33,6 +33,7 @@ All tokens live in `src/tokens/tokens.css` on `:root`. Owned exclusively by `pou
 - `--font-mono: "Geist Mono", ui-monospace, …` — Used for Stat source lines and RoleCard eyebrow labels. Encodes "reference" or "label" semantics.
 - `--fs-tagline: clamp(2.25rem, 1.5rem + 3.5vw, 4.25rem)` (36-68px) — The h1 display scale. Used exactly once per page for the Hero title.
 - `--fs-tagline-intimate: clamp(2rem, 1.25rem + 2.5vw, 3.25rem)` (32-52px) — Hero title at `size="intimate"`. Use only inside the Hero molecule. Never use directly on `h1` outside Hero context.
+- `--fs-display: clamp(3rem, 1.75rem + 4vw, 5.5rem)` (48-88px) — Editorial display rung above `--fs-tagline`. AT MOST ONCE PER PAGE. NOT a heading replacement (the semantic `<h1>` stays on `--fs-tagline` via `<Hero>`). Reserved for editorial display moments where the page opens on a single statement and the Hero pattern is being deliberately replaced — not augmented. Sits 8px below `--fs-stat-large` (96px) so numerals stay loudest.
 - `--fs-body: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem)` (17-19px) — Primary reading size.
 - `--fs-meta: 0.875rem` (14px) — Secondary text: captions, nav labels, badge text, hiredBy lines.
 - `--fs-micro: 0.75rem` (12px) — Uppercase labels only. Always paired with letter-spacing: 0.04em and text-transform: uppercase.
