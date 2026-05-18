@@ -318,3 +318,88 @@ test('a11y — bleed="full" passes axe-core with zero violations', async ({ moun
     .analyze();
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
 });
+
+/* ── illustration slot ─────────────────────────────────────── */
+
+test("illustration prop omitted — no illustration wrapper in DOM", async ({ mount }) => {
+  const component = await mount(<Hero title="Heading" lede="Lede." />);
+  await expect(component.locator("[class*='illustration']")).toHaveCount(0);
+});
+
+test("illustration prop provided — renders illustration slot content", async ({ mount }) => {
+  const component = await mount(
+    <Hero title="Heading" lede="Lede." illustration={<div data-testid="illus">art</div>} />,
+  );
+  await expect(component.locator("[data-testid='illus']")).toBeVisible();
+});
+
+test("illustration prop provided — applies illustration class to wrapper", async ({ mount }) => {
+  const component = await mount(
+    <Hero title="Heading" lede="Lede." illustration={<div data-testid="illus">art</div>} />,
+  );
+  await expect(component.locator("[class*='illustration']")).toHaveCount(1);
+});
+
+test('illustration is orthogonal to size="intimate"', async ({ mount }) => {
+  const component = await mount(
+    <Hero
+      size="intimate"
+      title="Heading"
+      lede="Lede."
+      illustration={<div data-testid="illus">art</div>}
+    />,
+  );
+  await expect(component.locator("h1")).toBeVisible();
+  await expect(component.locator("[data-testid='illus']")).toBeVisible();
+});
+
+test('illustration is orthogonal to entrance="stagger"', async ({ mount }) => {
+  const component = await mount(
+    <Hero
+      entrance="stagger"
+      title="Heading"
+      lede="Lede."
+      illustration={<div data-testid="illus">art</div>}
+    />,
+  );
+  const rootClass = await component.getAttribute("class");
+  expect(rootClass).toMatch(/entranceStagger|entrance-stagger/);
+  await expect(component.locator("[data-testid='illus']")).toBeVisible();
+});
+
+test('illustration is orthogonal to bleed="full"', async ({ mount }) => {
+  const component = await mount(
+    <Hero
+      bleed="full"
+      title="Heading"
+      lede="Lede."
+      illustration={<div data-testid="illus">art</div>}
+    />,
+  );
+  const rootClass = await component.getAttribute("class");
+  expect(rootClass).toMatch(/bleedFull|bleed-full/);
+  await expect(component.locator("[data-testid='illus']")).toBeVisible();
+});
+
+test('a11y — illustration with aria-hidden="true" passes axe-core', async ({ mount, page }) => {
+  await mount(
+    <Hero
+      title="Illustration hero"
+      lede="A lede paragraph for the illustration a11y test."
+      illustration={
+        <svg
+          viewBox="0 0 200 260"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <rect width="200" height="260" rx="4" stroke="currentColor" strokeWidth="1" />
+        </svg>
+      }
+    />,
+  );
+  const results = await new AxeBuilder({ page })
+    .disableRules(["landmark-one-main", "region"])
+    .analyze();
+  expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
+});

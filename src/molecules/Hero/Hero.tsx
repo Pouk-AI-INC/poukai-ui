@@ -36,6 +36,14 @@ type HeroShared = Omit<ComponentPropsWithoutRef<"section">, "title"> & {
    * Default "none" preserves existing behavior with no structural change.
    */
   bleed?: HeroBleed;
+  /**
+   * Optional illustration slot. When provided, Hero switches to a two-column layout
+   * (text left, illustration right) above 720px. Below 720px the illustration column
+   * is hidden and the text column renders full-width — single-column, unchanged.
+   * Default undefined preserves the current single-column layout with zero regression.
+   * Accessibility: DS does not impose aria-hidden — consumer-owned.
+   */
+  illustration?: ReactNode;
 };
 
 export type HeroDefaultProps = HeroShared & {
@@ -110,6 +118,7 @@ export const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
     size = "display",
     entrance,
     bleed = "none",
+    illustration,
     className,
     variant,
     title,
@@ -121,12 +130,20 @@ export const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
   ref,
 ) {
   if (variant === "no-title") {
-    const noTitleContent = (
+    const noTitleTextContent = (
       <>
         {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
         <p className={clsx(styles.lede, "lede")}>{lede}</p>
         {cta ? <div className={styles.cta}>{cta}</div> : null}
       </>
+    );
+    const noTitleContent = illustration ? (
+      <div className={styles.row}>
+        <div className={styles.textCol}>{noTitleTextContent}</div>
+        <div className={styles.illustration}>{illustration}</div>
+      </div>
+    ) : (
+      noTitleTextContent
     );
     return (
       <section
@@ -137,6 +154,7 @@ export const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
           alignClass[align],
           bleedClass[bleed],
           entrance != null ? entranceClass[entrance] : undefined,
+          illustration ? styles.hasIllustration : undefined,
           className,
         )}
         {...rest}
@@ -147,13 +165,21 @@ export const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
   }
 
   const Title = titleAs;
-  const defaultContent = (
+  const defaultTextContent = (
     <>
       {status ? <div className={styles.status}>{status}</div> : null}
       <Title className={styles.title}>{title}</Title>
       <p className={clsx(styles.lede, "lede")}>{lede}</p>
       {cta ? <div className={styles.cta}>{cta}</div> : null}
     </>
+  );
+  const defaultContent = illustration ? (
+    <div className={styles.row}>
+      <div className={styles.textCol}>{defaultTextContent}</div>
+      <div className={styles.illustration}>{illustration}</div>
+    </div>
+  ) : (
+    defaultTextContent
   );
   return (
     <section
@@ -164,6 +190,7 @@ export const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
         sizeClass[size],
         bleedClass[bleed],
         entrance != null ? entranceClass[entrance] : undefined,
+        illustration ? styles.hasIllustration : undefined,
         className,
       )}
       {...rest}

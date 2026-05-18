@@ -164,6 +164,15 @@
   animation-delay: calc(var(--dur-stagger-step) * 2);
 }
 
+/* Illustration slot — fifth element stagger (slot index 4, 600ms delay). */
+.entrance-stagger .illustration {
+  animation-name: rise-8;
+  animation-duration: var(--dur-slow);
+  animation-delay: calc(var(--dur-stagger-step) * 4);
+  animation-timing-function: var(--easing);
+  animation-fill-mode: both;
+}
+
 /* Reduced-motion override.
    tokens.css sets animation-duration: 0.01ms !important globally, but does NOT
    clear animation-delay or animation-fill-mode. With fill-mode: both and a
@@ -177,8 +186,49 @@
   .entrance-stagger .title,
   .entrance-stagger .lede,
   .entrance-stagger .cta,
-  .entrance-stagger .eyebrow {
+  .entrance-stagger .eyebrow,
+  .entrance-stagger .illustration {
     animation: none;
+  }
+}
+
+/* ============================================================
+   illustration slot — two-column layout
+   ============================================================ */
+
+/* The row activates only above 720px. Below that, the
+   component renders its existing single-column layout. */
+@media (min-width: 720px) {
+  .has-illustration {
+    max-width: none; /* override --hero-max on .root */
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-12);
+  }
+
+  .text-col {
+    flex: 0 0 auto;
+    max-width: var(--hero-max);
+    width: 100%;
+  }
+
+  .illustration {
+    flex: 1 1 auto;
+    max-width: var(--hero-illustration-max);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Below 720px: illustration hidden; text-col full-width */
+@media (max-width: 719px) {
+  .illustration {
+    display: none;
   }
 }
 
