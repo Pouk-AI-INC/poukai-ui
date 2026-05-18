@@ -217,6 +217,88 @@ All text pairings pass AA normal except `--accent` at small sizes — same const
 
 ---
 
+### 2026-05-18 — Counter-propose `--fs-display`; reject `--fs-display-lg` (issue #55)
+
+**Context.** GitHub issue [poukai-ui#55](https://github.com/poukai-inc/poukai-ui/issues/55) (mirrored to `meta/proposals/type-display-scale.md`) asked for two new typography tokens to support a new editorial display register above `--fs-tagline`:
+
+```css
+--fs-display: clamp(3rem, 2rem + 5vw, 7.5rem); /* 48–120px (proposed) */
+--fs-display-lg: clamp(4rem, 2rem + 8vw, 12rem); /* 64–192px (proposed) */
+```
+
+Driving composition: pouk.ai `/about` v2 Direction A — a "single-statement display lead" pattern owning the page's first viewport at extreme scale, deliberately differentiated from the Hero pattern that every other page uses. Three additional reuse surfaces were named (future `/manifesto`, OG cards / social-share, possible home revision); none of these are dated, scoped, or under active construction.
+
+The `proposal:approved` label was applied by the consumer agent on filing — that is the consumer flagging the proposal as ready for triage, not DS approval. DS approval lives here.
+
+**Principle.** The type ramp is part of the brand contract. Once a font-size token ships, the DS cannot withdraw it without breaking consumers; documented "use this once per page" composition rules are conventions, not runtime guardrails. Type-ramp additions must be defensible against: (a) the brand `§6` Apple-aligned register, (b) the existing rungs they sit between, and (c) the risk of misuse once the convention loosens.
+
+**Decision.** **Counter-propose**. Ship one new token, at a tighter range than asked, and reject the larger token outright.
+
+| Token             | Status                                | Value (clamp)                                        | Range        |
+| ----------------- | ------------------------------------- | ---------------------------------------------------- | ------------ |
+| `--fs-display`    | **New — counter-offer**               | `clamp(3rem, 1.75rem + 4vw, 5.5rem)`                 | `48–88px`    |
+| `--fs-display-lg` | **Rejected** — not deferred, declined | (consumer-proposed `clamp(4rem, 2rem + 8vw, 12rem)`) | (`64–192px`) |
+
+The new token lives in `src/tokens/tokens.css` inside the existing fluid type-scale block, immediately after `--fs-tagline-intimate`. The composition rule (once-per-page, editorial only, not a heading replacement) is documented in `llms-full.txt` at the engineer's pass.
+
+**Why one rung above `--fs-tagline`, not two.**
+
+The gap above `--fs-tagline` is real — there is no editorial type-display rung between `--fs-tagline` (max 68px) and the numerical `--fs-stat-large` (max 96px, scoped to `<Stat>`). Adding one rung closes the gap. Adding two rungs (a mid-display + a "fully owns the viewport" display) presupposes that two different page weights will reuse the editorial-display register at meaningfully different scales — which today is unfounded. `/about` Direction A is the only confirmed surface; the other three (future `/manifesto`, OG cards, possible home revision) are speculative. Two un-scoped tokens, each independently reachable by any consumer surface, is two un-scoped tokens — the `--fs-stat` / `--fs-stat-large` symmetry the consumer cites only holds because the stat tokens are anchored by a heavily-scoped `<Stat>` primitive. There is no equivalent primitive carrying the display tokens today.
+
+**Why `--fs-display-lg` is rejected, not capped.**
+
+1. **Register violation (brand `§6`).** Apple's marketing-display typography on `apple.com` tops out around 80–100px on the widest viewports; their condensed editorial register stays well below 192px. A 192px ceiling on pouk.ai would be louder than anything Apple ships on its own marketing surfaces. The current brand reads as restrained because the type ramp tops at 68px; jumping to 192px is not a refinement of the existing register, it is a different register. The current brand register is the one we want.
+2. **Runtime-undisciplined.** Tokens encode "once per page" by convention only. A 192px token will be reached for. Once it appears on two pages it normalises; once normal it becomes the brand.
+3. **One-shot need is not a token need.** Direction A's 192px moment, if Arian and the site team commit to it, is reachable today via a site-side `font-size: clamp(...)` declared inside `/about`'s page stylesheet. The DS does not need to bless that scale as a brand-level rung to enable a single direction on a single page.
+
+If a second confirmed surface arrives, we revisit — additive token, additive decision-log entry, cheap.
+
+**Why the `--fs-display` ceiling is `88px`, not `80px` (Arian's lean) or `120px` (consumer).**
+
+The ceiling is the contested number. The defended choice is `88px` for three reasons:
+
+1. **Distance from `--fs-tagline` (max 68px).** At an 80px ceiling the gap is 12px (1.18×) — at desktop scale on a serif display face this reads as "a slightly bigger Hero title", not a distinct register. At 88px the gap is 20px (1.29×), which crosses the threshold where the eye reads two sizes rather than one inconsistent one. The whole point of adding the rung is for it to register as a different rung.
+2. **Distance from `--fs-stat-large` (max 96px).** At ceiling 88px the editorial display sits 8px below numerical-stat display — numerals get to be the loudest, which is Apple-correct (`apple.com`'s largest editorial text sits around 80px; their numerical hero stats can and do go larger). Ceiling 96px would collide with the stat rung; ceiling 100px+ would invert the hierarchy. 88 keeps the order honest.
+3. **Apple band check.** 88px sits inside Apple's marketing-display band (iPhone landing ~72–96px, AirPods Max landing ~80–88px). The proposed 120/192 sit outside it.
+
+Floor stays at 48px (1.33× above `--fs-tagline`'s 36px floor — meaningfully distinct on mobile). Slope `1.75rem + 4vw` reaches the 88px ceiling at ~1437px viewport, growing fluidly across the marketing breakpoint band.
+
+**Alternatives considered.**
+
+1. **The consumer's exact ask** (`--fs-display` 48–120px + `--fs-display-lg` 64–192px). Rejected on register and on speculative reuse. See "Why `--fs-display-lg` is rejected."
+2. **Arian's lean** (`--fs-display` ~48–80px, drop `--fs-display-lg`). Adopted in shape, refined in ceiling: 80 → 88 to keep the rung distinct from `--fs-tagline` at desktop scale (1.18× → 1.29× delta).
+3. **Single token capped at `--fs-stat-large`'s 96px ceiling.** Rejected. Inverts the hierarchy by tying editorial type to the numerical-stat ceiling — numerals should stay the loudest, see §3 above.
+4. **Both tokens, but `--fs-display-lg` capped at 96–112px instead of 192px.** Considered. Rejected because the consumer's `--fs-display-lg` role ("brand's loudest typographic move, page-opening statement fully owns first viewport") cannot be met at 112px — at 112 it is barely louder than the `--fs-display` we're shipping, so the "two rungs for two page weights" framing collapses. If we ship two rungs, the second must be meaningfully larger; if the second can't be meaningfully larger without violating the register, we ship one rung.
+5. **No token; site-side clamp on `/about` only.** Rejected. The gap above `--fs-tagline` is a real type-ramp gap, not a one-page styling need — even constrained to 48–88px, the rung is reusable for future editorial openers and OG cards. Codifying the smaller rung now is honest; codifying the larger rung is not.
+6. **Defer the entire decision until a `<Statement>` molecule spec exists.** Rejected. The token is a foundational primitive; it can land before the consuming molecule. The site can ship the moment as a `<p>` + className today and migrate to `<Statement>` when that spec lands.
+
+**Composition rule (documented at engineer pass in `llms-full.txt`).**
+
+- At most once per page.
+- Not for body text.
+- Not for `<h1>` (semantic heading stays on `--fs-tagline` via `<Hero>`).
+- Reserved for editorial display moments where the page opens on a single statement and the Hero pattern is being deliberately replaced — not augmented.
+
+This is a documentation convention; the DS cannot enforce it at runtime. Documented expecting eventual misuse; the 88px ceiling is the worst-case the misuse can produce, which is acceptable.
+
+**Trade-offs accepted.**
+
+1. The consumer asked for two tokens and gets one, smaller. `/about` v2 Direction A may need composition rework (rescale the line, adjust whitespace, slower entrance) to land at 88px ceiling instead of 192px.
+2. `--fs-display` at 88px will likely be misused on a second page eventually. Worst case is documented misuse at 88px — still inside the Apple-aligned band. 192px misuse would have been outside it.
+3. Token surface grows by one entry.
+
+**Authorization.** `poukai-design` decision; Arian to ratify on review. Reference: GitHub issue [poukai-ui#55](https://github.com/poukai-inc/poukai-ui/issues/55); proposal mirror `meta/proposals/type-display-scale.md`.
+
+**Follow-ups for `poukai-ds-engineer` (not actioned by this change).**
+
+- Add `--fs-display: clamp(3rem, 1.75rem + 4vw, 5.5rem); /* 48-88 */` to `src/tokens/tokens.css` inside the existing fluid type-scale `:root` block, immediately after `--fs-tagline-intimate`. No other CSS changes.
+- Document the new token + composition rule in `llms-full.txt` alongside `--fs-tagline` and `--fs-tagline-intimate`.
+- Changeset: minor bump (additive token, no consumer behavior change, semver minor). May be bundled with other in-flight minors at the engineer's discretion.
+- **Do not** add `--fs-display-lg` regardless of follow-up requests on the same issue — the rejection is recorded above and any reversal requires a fresh decision-log entry.
+- Consider whether `meta/design/foundations.md` should be the canonical home for the type ramp once that file is filled in. Currently the Typography section in this file is a stub; populating it is deferred until the spacing and motion sections also get their first pass, so the foundations page lands as a coherent whole rather than a piecemeal accretion. The single new rung is captured in this decision-log entry and in `tokens.css`; the stub is intentional, not an oversight.
+
+---
+
 ### 2026-05-18 — Hero entrance animation tokens (issue #47)
 
 **Context.** GitHub issue #47 requests an `entrance="stagger"` prop on the Hero molecule — a CSS-only staggered reveal on page load. Four slots (status, title, lede, cta) animate in with a 150ms inter-slot delay. All animation values must be expressed via `var(--token)` references; no raw ms values allowed in Hero.module.css. Two token strategy decisions required sign-off before the spec could be finalized.
