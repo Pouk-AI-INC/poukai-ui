@@ -4,6 +4,47 @@ import { StatusBadge } from "../../atoms/StatusBadge";
 import { Button } from "../../atoms/Button";
 import { SiteShell } from "../../organisms/SiteShell";
 
+const sampleIllustration = (
+  <svg
+    viewBox="0 0 200 260"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    style={{ width: "100%", height: "auto", maxWidth: "25rem" }}
+  >
+    <rect width="200" height="260" rx="4" stroke="currentColor" strokeWidth="1" opacity="0.2" />
+    <line x1="20" y1="60" x2="180" y2="60" stroke="currentColor" strokeWidth="0.75" opacity="0.4" />
+    <line
+      x1="20"
+      y1="100"
+      x2="140"
+      y2="100"
+      stroke="currentColor"
+      strokeWidth="0.75"
+      opacity="0.3"
+    />
+    <line
+      x1="20"
+      y1="130"
+      x2="160"
+      y2="130"
+      stroke="currentColor"
+      strokeWidth="0.75"
+      opacity="0.3"
+    />
+    <line
+      x1="20"
+      y1="160"
+      x2="120"
+      y2="160"
+      stroke="currentColor"
+      strokeWidth="0.75"
+      opacity="0.2"
+    />
+    <circle cx="100" cy="30" r="12" stroke="currentColor" strokeWidth="0.75" opacity="0.5" />
+  </svg>
+);
+
 export default {
   title: "Components / Hero",
   args: {
@@ -223,4 +264,75 @@ export const EditorialDoorwayNoTitleWithSiteShell: Story = () => (
       in the Hero.
     </p>
   </SiteShell>
+);
+
+/* ── illustration slot ──────────────────────────────────────── */
+
+/**
+ * Two-column layout: text left, illustration right (above 720px).
+ * Below 720px the illustration column is hidden and text renders full-width.
+ * Consumer is responsible for aria-hidden on purely decorative illustrations.
+ */
+export const WithIllustration: Story = () => (
+  <Hero
+    status={<StatusBadge status="available">Taking conversations for Q3.</StatusBadge>}
+    title={sampleTitle}
+    lede={sampleLede}
+    cta={
+      <Button asChild>
+        <a href="mailto:hello@pouk.ai">hello@pouk.ai</a>
+      </Button>
+    }
+    illustration={sampleIllustration}
+  />
+);
+
+export const WithIllustrationNoStatus: Story = () => (
+  <Hero
+    title={sampleTitle}
+    lede={sampleLede}
+    cta={
+      <Button asChild>
+        <a href="mailto:hello@pouk.ai">hello@pouk.ai</a>
+      </Button>
+    }
+    illustration={sampleIllustration}
+  />
+);
+
+/** size="intimate" + illustration — orthogonality check. */
+export const WithIllustrationIntimate: Story = () => (
+  <Hero
+    size="intimate"
+    status={<StatusBadge status="available">Taking conversations for Q3.</StatusBadge>}
+    title={sampleTitle}
+    lede={sampleLede}
+    cta={
+      <Button asChild>
+        <a href="mailto:hello@pouk.ai">hello@pouk.ai</a>
+      </Button>
+    }
+    illustration={sampleIllustration}
+  />
+);
+
+/** entrance="stagger" + illustration — illustration column animates as the fifth element. */
+export const WithIllustrationEntranceStagger: Story = () => (
+  <Hero
+    entrance="stagger"
+    status={<StatusBadge status="available">Taking conversations for Q3.</StatusBadge>}
+    title={sampleTitle}
+    lede={sampleLede}
+    cta={
+      <Button asChild>
+        <a href="mailto:hello@pouk.ai">hello@pouk.ai</a>
+      </Button>
+    }
+    illustration={sampleIllustration}
+  />
+);
+
+/** Minimal: title + lede + illustration only — no status, no CTA. */
+export const IllustrationTextOnly: Story = () => (
+  <Hero title={sampleTitle} lede={sampleLede} illustration={sampleIllustration} />
 );
