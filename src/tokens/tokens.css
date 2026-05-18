@@ -94,6 +94,9 @@
   /* ---------- Layout ---------- */
   --page-pad: clamp(1.5rem, 2vw + 1rem, 3rem);
   --content-max: 64rem;
+  /* Full-bleed layout permission. Components opt into viewport-width by reading
+     this token. Canonical usage: width: var(--content-max-bleed); margin-inline: calc(50% - 50vw) */
+  --content-max-bleed: 100vw;
   --hero-max: 38rem;
 
   /* ---------- Button height ladder ----------

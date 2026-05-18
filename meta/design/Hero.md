@@ -4,7 +4,7 @@
 **Status**: Approved
 **Author**: poukai-design
 **Last updated**: 2026-05-18
-**Implements proposal**: GitHub issue #39; GitHub issue #52 (no-title variant)
+**Implements proposal**: GitHub issue #39; GitHub issue #52 (no-title variant); GitHub issue #57 (bleed prop)
 
 ---
 
@@ -61,6 +61,11 @@ The text column is capped at --hero-max (38rem / 608px) on all viewport widths.
 - --space-2: 0.5rem (8px) — eyebrow-to-lede gap. The spacing table in llms-full.txt describes this as the "eyebrow-to-title" gap; the same value applies in no-title because the lede plays the structural role that the title played — the closest landmark below the eyebrow.
 - --fs-body — lede font-size (same as default variant).
 - --hero-max — lede max-width (same as default variant).
+
+**Additional tokens used when `bleed="full"` (added 2026-05-18, GitHub issue #57):**
+
+- --content-max-bleed: 100vw — outer container width. The bleed token is a layout permission token; it signals that this surface is explicitly opting out of the content column constraint. Value: `100vw`. Scrollbar-width call: `100vw` is used, not `calc(100vw - scrollbar-width)`. Rationale documented in `meta/brand.md` under the 2026-05-18 bleed token entry.
+- --page-pad — inner content padding at bleed edges. Pre-existing token; applied to the inner wrapper's `padding-inline` so the text column never collides with the viewport edge even at narrow widths.
 
 ## 4. Layout and rhythm
 
@@ -239,6 +244,7 @@ The reduced-motion override documented below must also cover the eyebrow slot wh
 - Consumers must be able to choose align=start (default) or align=center.
 - Consumers must be able to opt into a staggered entrance animation by passing entrance="stagger". The default (entrance={undefined}) preserves current static behavior with no animation — zero regression for existing consumers.
 - The entrance prop is independent of size and align. All three are orthogonal axes.
+- Consumers must be able to opt a Hero band into full-bleed (`100vw`) layout via a `bleed` prop. Default is `bleed="none"` — current behavior unchanged, outer container capped at `--content-max`. `bleed="full"` opts the outer container into `--content-max-bleed` (100vw). The bleed prop is independent of size, align, entrance, and variant. All are orthogonal axes.
 
 **`variant="no-title"` prop intent:**
 
@@ -271,3 +277,74 @@ The reduced-motion override documented below must also cover the eyebrow slot wh
 - Note: "Animated title entrance" was listed as out of scope in the original spec. This restriction was lifted in revision 2026-05-18 (GitHub issue #47). The entrance="stagger" variant is now in scope and fully specified in §6 above.
 - Note: the original #39 spec locked vertical rhythm as invariant across both size values. That lock was explicitly reversed after a live audit with Arian on 2026-05-17 (GitHub issue #44). The status→title and title→lede gaps now scale with size as documented in Section 4.
 - Note: `variant="no-title"` was added 2026-05-18 (GitHub issue #52). It does not introduce new tokens; all tokens were pre-existing.
+- Note: `bleed` prop was added 2026-05-18 (GitHub issue #57). See §11 below.
+
+---
+
+## 11. Bleed layout — `bleed` prop
+
+**Added 2026-05-18 (GitHub issue #57).**
+
+### Purpose
+
+Some editorial bands require a surface that extends to the viewport edge — typically a portrait/illustration moment where the background fill needs to span the full width. The `bleed` prop opts a Hero band into viewport-width layout without changing any other behavior. It is a layout permission, not a visual variant.
+
+### Values
+
+**`bleed="none"` (default)**
+
+Current behavior. The outer `<section>` is capped at `--content-max` (64rem). Zero regression for all existing consumers. This is the implicit default; no prop is required to preserve it.
+
+**`bleed="full"`**
+
+The outer `<section>` spans the full viewport width. The CSS pattern the engineer must implement:
+
+```css
+width: var(--content-max-bleed); /* 100vw */
+margin-inline: calc(50% - 50vw);
+```
+
+This pattern works because the Hero sits inside a `--content-max`-constrained parent. The negative margin-inline calculation pulls the section edges out to the viewport boundary regardless of how deeply nested the component is in the page layout. The surface background (the `<section>`'s background value, set via the `surface` token on the band) fills edge-to-edge.
+
+The inner content row (text column + any illustration column) must be re-centered inside the bled container:
+
+```css
+max-width: var(--content-max);
+margin-inline: auto;
+padding-inline: var(--page-pad);
+```
+
+`padding-inline: var(--page-pad)` is load-bearing. On narrow viewports, once the container is full-width, there is no parent padding constraining the inner content. `--page-pad` (clamp(1.5rem, 2vw + 1rem, 3rem)) provides the gutter that prevents text from touching the screen edges.
+
+### Relationship to other props
+
+`bleed` is orthogonal to all other Hero props:
+
+- **`bleed` + `variant`**: the bleed pattern applies to both the default variant and `variant="no-title"`. In both cases the outer container bleeds; the inner content centering is unchanged.
+- **`bleed` + `surface`**: `surface` controls what background color/token fills the container. `bleed` controls how wide that container is. They compose independently. A Hero with `surface="--surface-section"` and `bleed="full"` will display a `--surface-section` band edge-to-edge.
+- **`bleed` + `entrance`**: the stagger animation fires on the slot children inside the inner wrapper. The outer container's width change has no effect on animation behavior.
+- **`bleed` + `size`** and **`bleed` + `align`**: both remain fully functional inside the inner wrapper.
+
+### Scrollbar-width decision
+
+The token value is `100vw`, not `calc(100vw - scrollbar-width)` or `100dvw`.
+
+**Rationale:**
+
+1. macOS (primary platform for pouk.ai's operator audience) uses overlay scrollbars that occupy zero layout width. On that platform `100vw === viewport content width` exactly.
+2. On Windows with space-occupying scrollbars (typically 15–17px), `100vw` creates a cosmetic overhang at bleed edges. This is addressable at the site layout level if it becomes a real problem — for example, a `scrollbar-gutter: stable` rule on `<html>` eliminates the discrepancy entirely. It is not a DS-level constraint.
+3. `100dvw` is preferable for vertical viewport units (height, dvh) but `vw` is about width, not height. `100vw` and `100dvw` are equivalent for width; `vw` is correct here.
+4. `calc(100vw - scrollbar-width)` requires `@property` registration + fallback gymnastics for older browsers, and degrades gracefully to `100vw` on every platform that matters. The complexity cost exceeds the benefit.
+5. Editorial references (Apple, Stripe, NYT, Linear) universally implement full-bleed with `100vw`. The approach is the established editorial pattern.
+
+This decision is final and documented in `meta/brand.md`. Future maintainers must not silently change the token value to a `calc()` expression — that would constitute a brand-level change requiring Arian's approval.
+
+### Engineer implementation notes (not spec — informational)
+
+The engineer is free to implement this any way they choose. These notes describe the spec intent:
+
+- A `bleed` prop with values `"none" | "full"` (default `"none"`).
+- When `bleed="full"`, apply the outer container CSS pattern above and add the inner wrapper with centering and `padding-inline`.
+- When `bleed="none"`, no structural change from the current implementation.
+- The bleed modifier class (whatever the engineer names it) lives in `Hero.module.css`, not in `tokens.css`.
+- The `--content-max-bleed` token is what anchors the width value. Do not hardcode `100vw` in the module CSS — read the token.
