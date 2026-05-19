@@ -50,6 +50,7 @@ const COMPONENTS = {
     "TeamCard",
     "FeatureCard",
     "FieldNote",
+    "Quote",
   ],
   organisms: ["SiteShell", "Footer"],
 };

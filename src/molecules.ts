@@ -28,3 +28,4 @@ export { LinkCard, type LinkCardProps, type LinkCardVariant } from "./molecules/
 export { TeamCard, type TeamCardProps } from "./molecules/TeamCard";
 export { FeatureCard, type FeatureCardProps } from "./molecules/FeatureCard";
 export { FieldNote, type FieldNoteProps } from "./molecules/FieldNote";
+export { Quote, type QuoteProps } from "./molecules/Quote";

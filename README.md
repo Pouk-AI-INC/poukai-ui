@@ -84,6 +84,7 @@ other layers, even if the bundler's tree-shaker would miss it.
 | molecule | `FeatureCard` | Icon + eyebrow + title + body + footer; structural feature-grid tile (non-interactive) |
 | molecule | `TeamCard`    | Person tile: portrait + name + role + bio + contact; stacked or horizontal layout      |
 | molecule | `FieldNote`   | Inline technical aside; 1px left rule, optional muted label, body-register typography  |
+| molecule | `Quote`       | Attributed customer testimonial; sans-serif roman body, hairline rule, avatar slot     |
 | organism | `SiteShell`   | Top nav + main slot + hairline footer; no router awareness                             |
 | organism | `Footer`      | Copyright + email + optional secondary link row; `as` prop avoids double `<footer>`    |
 

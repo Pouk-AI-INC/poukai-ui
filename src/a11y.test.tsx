@@ -19,6 +19,7 @@ import { TeamCard } from "./molecules/TeamCard";
 import { Portrait } from "./molecules/Portrait";
 import { FeatureCard } from "./molecules/FeatureCard";
 import { FieldNote } from "./molecules/FieldNote";
+import { Quote } from "./molecules/Quote";
 import { SiteShell } from "./organisms/SiteShell";
 import { Footer } from "./organisms/Footer";
 
@@ -254,6 +255,33 @@ test("a11y — FieldNote (with inline link)", async ({ mount, page }) => {
       The latency figures come from our <a href="/methodology">public methodology doc</a>, updated
       monthly.
     </FieldNote>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — Quote (full: quote, name, role, avatar img)", async ({ mount, page }) => {
+  await mount(
+    <Quote
+      quote="We went from weeks to hours. The tooling handled what we used to staff an entire team for."
+      name="Sarah Chen"
+      role="VP Engineering, Meridian Labs"
+      avatar={
+        <img
+          src="https://picsum.photos/seed/sarah-a11y-gate/40/40"
+          alt=""
+          width={40}
+          height={40}
+          style={{ borderRadius: "50%", display: "block" }}
+        />
+      }
+    />,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — Quote (no avatar, no role)", async ({ mount, page }) => {
+  await mount(
+    <Quote quote="The feedback loop closed in days, not quarters." name="Tomás Rivera" />,
   );
   await expectAxeClean(page);
 });

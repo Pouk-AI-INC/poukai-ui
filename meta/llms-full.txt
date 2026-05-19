@@ -343,6 +343,69 @@ Padding and font-size stay hand-tuned per size (no separate padding-token scale)
 </FieldNote>
 ```
 
+### Quote
+- Attributed customer testimonial molecule. A short prose block (1–4 sentences) from a named person, with optional role/title and optional avatar slot. Primary surface: customer story pages and social-proof sections.
+- Root element: `<figure>`. Not polymorphic — `<figure>` is the single correct semantic root for attributed quotations per HTML5. Inside: `<blockquote>` for the quoted body, `<figcaption>` for the attribution row. This structure correctly associates the attribution with the quote at the HTML semantic level — no extra ARIA needed.
+- Distinct from `<Pull>` (unattributed editorial pull-quote, Instrument Serif italic, left rule) and `<Statement>` (brand assertion, once per page, no attribution). Quote is sans-serif roman — identifiable at a glance from Pull/Statement without reading the attribution.
+- `quote` (required ReactNode) — the quoted body text. Accepts inline marks (`<em>`, `<strong>`) for emphasis within the passage. No block-level children — no headings, lists, nested paragraphs. Rendered as direct child of `<blockquote>`.
+- `name` (required string) — the attributed person's name. Plain string; `font-weight: 500`, `--fg`, `--fs-meta` (14px).
+- `role` (optional string) — the person's role or title. Plain string. Example: `"VP Engineering, Acme Corp"`. `font-weight: 400`, `--fg-muted`, `--fs-meta`. When omitted, no role element is rendered.
+- `avatar` (optional ReactNode) — avatar slot. Accepts any ReactNode: `<img>`, a third-party Avatar, a `<div>` with initials. The DS does not ship an Avatar atom. When present, rendered as the leftmost element of the attribution row; when absent, the name/role column sits flush. Convention: size to 40×40px and clip to circle (`border-radius: 50%`). DS does not enforce sizing or shape. If passing `<img>`, set `alt=""` (decorative) — the `name` is the text alternative.
+- Layout: stacked. Body above, attribution row below. No sidebar layout. Stacked degrades cleanly when avatar is absent.
+- `<blockquote>` body typography: `--fs-pull` (20–26px fluid), `--font-sans` (Geist), `font-weight: 400`, `font-style: normal`, `line-height: 1.45`, `color: var(--fg)`. `--fs-pull` reuses Pull's scale — both are quoted-content primitives at elevated size. The typographic differentiator is register (sans roman vs. serif italic), not size.
+- `<figcaption>` layout: `display: flex`, `align-items: center`, `gap: var(--space-3)` (12px avatar-to-name column). `margin-top: var(--space-4)` (16px) from blockquote. `padding-top: var(--space-4)` (16px) above content. `border-top: var(--hairline-w) solid var(--hairline)` — always present; use `className` to suppress if needed.
+- Name/role column: `display: flex`, `flex-direction: column`, `gap: var(--space-1)` (4px).
+- `max-width: var(--hero-max)` (38rem / 608px) — matches the prose column cap used by Pull, Hero, Section, and FieldNote.
+- `margin-block: var(--space-8)` (32px) — matches Pull's block margin. Remove default UA `margin` on `<figure>`.
+- `className` merges via `clsx`. `forwardRef` to the `<figure>` root. `displayName = "Quote"`. Full `ComponentPropsWithoutRef<"figure">` spread (id, data-*, aria-*, event handlers).
+- No cite prop in v1 — customer story quotes rarely have a URL source; deferred to later revision.
+- No showRule prop — hairline rule is always on. Use className override to suppress.
+- No avatar shape wrapper — DS does not enforce sizing; consumer responsibility.
+- No variant, no size, no as prop.
+- Tokens consumed: `--fs-pull`, `--fs-meta`, `--font-sans`, `--fg`, `--fg-muted`, `--hairline`, `--hairline-w`, `--space-1`, `--space-3`, `--space-4`, `--space-8`, `--lh-meta`, `--hero-max`. No new tokens introduced.
+- Contrast: body/name `--fg` (#1D1D1F) on `--bg` (#FBFBFD) = 16.29:1 (AAA). Role `--fg-muted` (#6E6E73) on `--bg` (#FBFBFD) = 4.91:1 (AA normal ✓ at 14px). Hairline is decorative.
+- Do NOT use Quote for unattributed text — use `<Pull>` if there is no named person.
+- Do NOT place Quote inside `<Hero>`. Hero owns the page display moment.
+- Do NOT use both Pull and Quote for the same person's words on the same page — pick the register.
+- Do NOT render Quote on a `--bg-warm-accent` band — palette interaction is untested.
+- Do NOT add a `cite` prop, `showRule` prop, avatar container wrapper, or `as` polymorphism without founder sign-off.
+- Do NOT pass block-level elements as `quote`. Inline marks only.
+
+```tsx
+// Full Quote — avatar, name, role:
+<Quote
+  quote="We went from weeks to hours. The tooling handled what we used to staff an entire team for."
+  name="Sarah Chen"
+  role="VP Engineering, Meridian Labs"
+  avatar={
+    <img
+      src="https://cdn.example.com/avatars/sarah-chen.jpg"
+      alt=""
+      width={40}
+      height={40}
+      style={{ borderRadius: "50%", display: "block" }}
+    />
+  }
+/>
+
+// Without avatar:
+<Quote
+  quote="The accuracy improvements were immediate and measurable."
+  name="James Okonkwo"
+  role="Head of Data, Fieldwork AI"
+/>
+
+// Name only — no role, no avatar:
+<Quote quote="Exactly what we needed. Nothing we didn't." name="Priya Mehta" />
+
+// Inline emphasis in quote body:
+<Quote
+  quote={<>We went from <em>weeks</em> to hours.</>}
+  name="Sarah Chen"
+  role="VP Engineering, Meridian Labs"
+/>
+```
+
 ### SiteShell
 - Do NOT nest SiteShell inside another SiteShell. It is min-height: 100dvh.
 - Emits plain <a href> tags — framework-router consumers intercept at app level.
