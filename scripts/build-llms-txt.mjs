@@ -49,6 +49,7 @@ const COMPONENTS = {
     "LinkCard",
     "TeamCard",
     "FeatureCard",
+    "FieldNote",
   ],
   organisms: ["SiteShell", "Footer"],
 };

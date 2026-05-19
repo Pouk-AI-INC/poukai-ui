@@ -18,6 +18,7 @@ import { LinkCard } from "./molecules/LinkCard";
 import { TeamCard } from "./molecules/TeamCard";
 import { Portrait } from "./molecules/Portrait";
 import { FeatureCard } from "./molecules/FeatureCard";
+import { FieldNote } from "./molecules/FieldNote";
 import { SiteShell } from "./organisms/SiteShell";
 import { Footer } from "./organisms/Footer";
 
@@ -223,6 +224,36 @@ test("a11y — Pull (as='aside', sans variant)", async ({ mount, page }) => {
     <Pull as="aside" variant="sans" attribution="— from §3, Engineering culture">
       The smallest real deployment teaches more than six months of staging.
     </Pull>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — FieldNote (body only, no label)", async ({ mount, page }) => {
+  await mount(
+    <FieldNote>
+      In 2024 we ran the same prompt across three model families and saw consistent degradation
+      after context exceeded 16k tokens.
+    </FieldNote>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — FieldNote (with label)", async ({ mount, page }) => {
+  await mount(
+    <FieldNote label="Note">
+      These numbers reflect Q4 2023 benchmarks. The 2024 evals are in progress and results may
+      differ.
+    </FieldNote>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — FieldNote (with inline link)", async ({ mount, page }) => {
+  await mount(
+    <FieldNote label="Note">
+      The latency figures come from our <a href="/methodology">public methodology doc</a>, updated
+      monthly.
+    </FieldNote>,
   );
   await expectAxeClean(page);
 });

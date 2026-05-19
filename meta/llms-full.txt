@@ -299,6 +299,50 @@ Padding and font-size stay hand-tuned per size (no separate padding-token scale)
 - Do NOT pass `titleAs="h1"` — a feature tile is never a page heading. The prop type excludes it.
 - Do NOT compose FeatureCard with RoleCard in the same grid. RoleCard carries sequencing semantics that conflict with FeatureCard's peer-item register.
 
+### FieldNote
+- Inline technical-aside molecule. A short parenthetical callout — a sentence or two — that sits inline with body copy and provides a factual clarification, caveat, or data footnote without interrupting reading flow.
+- Root element: `<aside>`. Not polymorphic — there is no `as` prop. `<aside>` is the semantically correct element for tangentially related content (HTML spec). When nested inside `<article>` or `<section>`, `<aside>` degrades from a `complementary` landmark to a generic container — this is the correct behavior for multiple per-page inline asides (avoids landmark pollution).
+- `label` (optional string) — renders a single `<p>` above the body text in the Eyebrow typographic register (`--fs-meta` 14px, `--fg-muted`, `text-transform: uppercase`, `--tracking-eyebrow` 0.06em letter-spacing, `--lh-meta` 1.2 line-height). When absent, no label element is rendered. Default: `undefined`. Example values: `"Note"`, `"Caveat"`, `"Aside"`, `"Data point"`. Do NOT default to `"Note"` — the left rule is the signal; the label is for when type of aside is load-bearing information.
+- `children` (required ReactNode) — the body text. Rendered inside a `<p className="body">`. Accepts inline marks only: `<strong>`, `<em>`, `<a>`. No block-level children — no `<h2>`, `<ul>`, `<p>`, `<div>`, `<table>`. Editorial constraint; not type-enforced.
+- Left rule: `border-inline-start: var(--hairline-w) solid var(--hairline)`. Always present. 1px — quieter than Pull's 3px editorial accent. Decorative; no contrast requirement applies.
+- `padding-inline-start: var(--space-3)` (12px) — tighter than Pull's `--space-4` (16px). Reinforces FieldNote's subsidiary character.
+- `margin-block: var(--space-6)` (24px) — less than Pull's `--space-8` (32px). FieldNote is a minor inline pause; Pull is a major editorial pause.
+- `max-width: var(--hero-max)` (38rem / 608px) — matches the prose column cap used by Pull, Hero, and Section header blocks.
+- Body typography: `--fs-body` (17–19px fluid), `--font-sans` (Geist), `font-style: normal`, `line-height: 1.55` (global body value, inline — BACKLOG migration target when `--lh-body` is tokenized), `color: var(--fg)`. FieldNote body is real content, not a caption — full-weight color, not muted.
+- Inline links inside `children` inherit the global `<a>` two-layer underline rule from `tokens.css`. At rest: 1px `--hairline` underline. On hover: 1px `--accent` underline grows over it via `background-size` transition (`--dur-mid`, `--easing-link`). On `:focus-visible`: `outline: 2px solid var(--accent)`, `outline-offset: 4px`, `border-radius: var(--radius-1)`. No override in FieldNote's CSS scope — global rule is correct and must NOT be suppressed.
+- No states, no motion, no entrance animation. Static typography.
+- No color variants (`variant="warning"` etc.) — excluded at the brand level. Colored callouts are a different component. This exclusion requires explicit founder sign-off to change.
+- No icon slot. Icons imply status severity; FieldNote is plain text only.
+- No multi-paragraph body. Single-paragraph aside. For multiple paragraphs, use Section with `size="tight"`.
+- Tokens consumed: `--hairline-w`, `--hairline`, `--space-3`, `--space-1`, `--space-6`, `--fs-body`, `--fs-meta`, `--fg`, `--fg-muted`, `--font-sans`, `--tracking-eyebrow`, `--lh-meta`, `--hero-max`. No new tokens introduced.
+- Contrast: body `--fg` (#1D1D1F) on `--bg` (#FBFBFD) = 16.29:1 (AAA). Label `--fg-muted` (#6E6E73) on `--bg` (#FBFBFD) = 4.91:1 (AA normal ✓ at 14px).
+- Do NOT use FieldNote for content that has a title, an index, or more than two sentences of structured prose — use `<FailureMode>` or `<Section>`.
+- Do NOT nest FieldNote inside `<Pull>`. They operate at different typographic scales.
+- Do NOT place FieldNote inside `<Hero>`. Hero owns the page display moment.
+- Do NOT pass block-level elements as `children`. No `<h2>`, `<ul>`, `<table>`, `<div>`. Inline marks only.
+- Do NOT add an `as` prop. Root is always `<aside>`.
+- Do NOT add color variants. Tonally neutral by brand decision.
+
+```tsx
+// Plain body — no label (left rule is the signal):
+<FieldNote>
+  In 2024 we ran the same prompt across three model families and saw consistent
+  degradation after context exceeded 16k tokens.
+</FieldNote>
+
+// With label — when type of aside is load-bearing:
+<FieldNote label="Caveat">
+  These numbers reflect Q4 2023 benchmarks. The 2024 evals are in progress
+  and results may differ.
+</FieldNote>
+
+// With inline link in body:
+<FieldNote label="Note">
+  The latency figures come from our{" "}
+  <a href="/methodology">public methodology doc</a>, updated monthly.
+</FieldNote>
+```
+
 ### SiteShell
 - Do NOT nest SiteShell inside another SiteShell. It is min-height: 100dvh.
 - Emits plain <a href> tags — framework-router consumers intercept at app level.
