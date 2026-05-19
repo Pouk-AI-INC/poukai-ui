@@ -70,21 +70,14 @@ export const Playground: Story<{
  * NoLinks: copyright + email only — no links prop.
  * Verifies no <nav> is emitted and left group is still coherent.
  */
-export const NoLinks: Story = () => (
-  <Footer copyright="© Pouk AI INC 2026" email="hello@pouk.ai" />
-);
+export const NoLinks: Story = () => <Footer copyright="© Pouk AI INC 2026" email="hello@pouk.ai" />;
 
 /**
  * Standalone: as="footer" with full props.
  * Footer emits its own <footer> landmark with hairline rule and padding.
  */
 export const Standalone: Story = () => (
-  <Footer
-    as="footer"
-    copyright="© Pouk AI INC 2026"
-    email="hello@pouk.ai"
-    links={sampleLinks}
-  />
+  <Footer as="footer" copyright="© Pouk AI INC 2026" email="hello@pouk.ai" links={sampleLinks} />
 );
 
 /**
@@ -144,6 +137,8 @@ export const InsideSiteShell: Story = () => (
     }
   >
     <h1>Why AI</h1>
-    <p>Footer slotted into SiteShell — no double landmark, layout aligns within SiteShell padding.</p>
+    <p>
+      Footer slotted into SiteShell — no double landmark, layout aligns within SiteShell padding.
+    </p>
   </SiteShell>
 );

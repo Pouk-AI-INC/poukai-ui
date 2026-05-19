@@ -75,11 +75,7 @@ test("nav has correct aria-label (default Footer)", async ({ mount }) => {
 
 test("nav aria-label is overridable via linksLabel", async ({ mount }) => {
   const component = await mount(
-    <Footer
-      {...BASE_PROPS}
-      links={[{ href: "/privacy", label: "Privacy" }]}
-      linksLabel="Legal"
-    />,
+    <Footer {...BASE_PROPS} links={[{ href: "/privacy", label: "Privacy" }]} linksLabel="Legal" />,
   );
   await expect(component.locator("nav")).toHaveAttribute("aria-label", "Legal");
 });
@@ -88,9 +84,7 @@ test("external link gets target and rel attributes", async ({ mount }) => {
   const component = await mount(
     <Footer
       {...BASE_PROPS}
-      links={[
-        { href: "https://github.com/poukai-inc", label: "GitHub ↗", external: true },
-      ]}
+      links={[{ href: "https://github.com/poukai-inc", label: "GitHub ↗", external: true }]}
     />,
   );
   const link = component.locator('a[href="https://github.com/poukai-inc"]');

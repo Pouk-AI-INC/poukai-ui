@@ -68,16 +68,7 @@ export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
  *   />
  */
 export const Footer = forwardRef<HTMLElement, FooterProps>(function Footer(
-  {
-    as = "div",
-    copyright,
-    email,
-    emailLabel,
-    links,
-    linksLabel = "Footer",
-    className,
-    ...rest
-  },
+  { as = "div", copyright, email, emailLabel, links, linksLabel = "Footer", className, ...rest },
   ref,
 ) {
   if (import.meta.env.DEV && copyright === "") {
