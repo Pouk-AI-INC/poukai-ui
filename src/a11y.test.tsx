@@ -21,6 +21,7 @@ import { Portrait } from "./molecules/Portrait";
 import { FeatureCard } from "./molecules/FeatureCard";
 import { FieldNote } from "./molecules/FieldNote";
 import { Quote } from "./molecules/Quote";
+import { Avatar } from "./atoms/Avatar";
 import { SiteShell } from "./organisms/SiteShell";
 import { Footer } from "./organisms/Footer";
 
@@ -144,6 +145,21 @@ test("a11y — Tag (both tones, with and without icon)", async ({ mount, page })
       >
         Optional
       </Tag>
+    </div>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — Avatar (image+alt, initials+name, empty+name)", async ({ mount, page }) => {
+  await mount(
+    <div>
+      <Avatar
+        mode="image"
+        src="https://picsum.photos/seed/a11y-av/80/80"
+        alt="Test person — a11y scan"
+      />
+      <Avatar mode="initials" initials="AZ" name="Arian Zargaran" />
+      <Avatar name="Unknown person" />
     </div>,
   );
   await expectAxeClean(page);

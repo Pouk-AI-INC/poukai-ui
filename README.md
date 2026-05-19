@@ -73,6 +73,7 @@ other layers, even if the bundler's tree-shaker would miss it.
 | atom     | `Eyebrow`     | Canonical micro-label: uppercase, tracked, sans-serif                                  |
 | atom     | `EmailLink`   | Canonical `mailto:` affordance with icon + qualifier slots                             |
 | atom     | `Tag`         | Inline categorical pill — type, category, or topic label                               |
+| atom     | `Avatar`      | Person/entity identity display — image, initials, or placeholder; circle or square     |
 | molecule | `Hero`        | Status / title / lede / CTA — editorial vertical rhythm                                |
 | molecule | `RoleCard`    | Icon + eyebrow + title + body + hired-by; card recipe                                  |
 | molecule | `Principle`   | Margin numeral + title + body; editorial layout                                        |

@@ -429,6 +429,26 @@ Padding and font-size stay hand-tuned per size (no separate padding-token scale)
 />
 ```
 
+### Avatar
+- Atom for person/entity identity display. Three modes via discriminated union on `mode` prop.
+- `mode="image"` — renders `<img loading="lazy">` with `src` (required) and optional `alt`. `loading` is hardcoded to `"lazy"` — no escape hatch. No `onError` fallback — broken image falls back to browser default; consumers who need a fallback wrap in their own state.
+- `mode="initials"` — renders 1–2 character text label inside the avatar shape. Consumer is responsible for the initials string — Avatar does NOT derive initials from a name.
+- `mode="empty"` (default when `mode` is omitted) — blank placeholder, no inner content.
+- `size` (`"sm"` | `"md"` | `"lg"`, default `"md"`) — fixed pixel dimensions: sm=24px, md=32px, lg=40px. These are inline px values in the CSS module (no tokens). Initials font scales proportionally: sm=10px, md=12px, lg=14px.
+- `shape` (`"circle"` | `"square"`, default `"circle"`) — circle uses `border-radius: 50%`; square uses `--radius-2` (4px). Inline `border-radius: 50%` in CSS module (no token).
+- Hairline ring: `box-shadow: 0 0 0 1px var(--hairline)` — avoids layout shift versus a CSS `border`. Uses `--hairline` token.
+- Background: `--surface`. Text color: `--fg-muted`. Font: `--font-sans`, weight 500.
+- `name` (optional string) — accessible name for the avatar as a whole. Required in initials and empty modes for a11y. In image mode: required when `alt` is omitted. Produces `role="img"` + `aria-label` on the root `<span>`.
+- In image mode with `alt` provided, the `<img>` carries the label and the root span does NOT receive `role="img"` (avoids double-labelling).
+- Root is always `<span>`. Non-polymorphic. Ref forwarded to root span. `...rest` spread to root element.
+- Tokens consumed: `--surface` (background), `--fg-muted` (text + initials color), `--hairline` (ring), `--font-sans` (font family), `--radius-2` (square shape).
+- Do NOT add `onError` fallback — stateless atom. Consumers own error handling.
+- Do NOT pass `loading` — hardcoded `"lazy"` on internal `<img>`. No prop escape hatch.
+- Do NOT derive initials from a name string — pass initials explicitly via `initials` prop.
+- Do NOT add group/stack composition at this layer — consumer-side concern.
+- Do NOT make Avatar polymorphic — root is always `<span>`.
+- Do NOT use Avatar for decorative brand imagery — use `<Portrait>` for editorial photography.
+
 ### SiteShell
 - Do NOT nest SiteShell inside another SiteShell. It is min-height: 100dvh.
 - Emits plain <a href> tags — framework-router consumers intercept at app level.
