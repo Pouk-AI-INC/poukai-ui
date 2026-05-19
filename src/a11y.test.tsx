@@ -5,11 +5,19 @@ import { Wordmark } from "./atoms/Wordmark";
 import { StatusBadge } from "./atoms/StatusBadge";
 import { Button } from "./atoms/Button";
 import { Stat } from "./atoms/Stat";
+import { Eyebrow } from "./atoms/Eyebrow";
+import { EmailLink } from "./atoms/EmailLink";
 import { Hero } from "./molecules/Hero";
 import { RoleCard } from "./molecules/RoleCard";
 import { Principle } from "./molecules/Principle";
 import { FailureMode } from "./molecules/FailureMode";
 import { Statement } from "./molecules/Statement";
+import { Section } from "./molecules/Section";
+import { Pull } from "./molecules/Pull";
+import { LinkCard } from "./molecules/LinkCard";
+import { TeamCard } from "./molecules/TeamCard";
+import { Portrait } from "./molecules/Portrait";
+import { FeatureCard } from "./molecules/FeatureCard";
 import { SiteShell } from "./organisms/SiteShell";
 
 /**
@@ -84,6 +92,30 @@ test("a11y — Stat", async ({ mount, page }) => {
   await expectAxeClean(page);
 });
 
+test("a11y — EmailLink (variants)", async ({ mount, page }) => {
+  await mount(
+    <div>
+      <EmailLink email="hello@pouk.ai" />
+      <EmailLink email="hello@pouk.ai" variant="muted" />
+      <EmailLink email="founder@pouk.ai" qualifier="Arian" />
+    </div>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — Eyebrow (all variants)", async ({ mount, page }) => {
+  await mount(
+    <div>
+      <Eyebrow variant="muted">Role 01</Eyebrow>
+      <Eyebrow variant="solid">Engineering</Eyebrow>
+      <Eyebrow variant="numbered" numeral="FM-03">
+        Failure Mode
+      </Eyebrow>
+    </div>,
+  );
+  await expectAxeClean(page);
+});
+
 /* ---------- molecules ---------- */
 
 test("a11y — Hero (with status + cta)", async ({ mount, page }) => {
@@ -152,6 +184,164 @@ test("a11y — FailureMode", async ({ mount, page }) => {
     <FailureMode index={1} title="The chatbot-on-top-of-RAG plateau.">
       <p>Most teams stop here. The demo dazzles; the production loop never closes.</p>
     </FailureMode>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — Section (full header + children)", async ({ mount, page }) => {
+  await mount(
+    <Section
+      eyebrow="01 · Approach"
+      title="The rules we ship by."
+      lede="Supporting copy that gives the reader the gist."
+    >
+      <p>Body content.</p>
+    </Section>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — Section (as='article')", async ({ mount, page }) => {
+  await mount(
+    <Section as="article" title="Press mention" lede="Independently distributable content." />,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — Pull (default blockquote, serif, with attribution)", async ({ mount, page }) => {
+  await mount(
+    <Pull attribution="— from §3, Engineering culture">
+      The smallest real deployment teaches more than six months of staging.
+    </Pull>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — Pull (as='aside', sans variant)", async ({ mount, page }) => {
+  await mount(
+    <Pull as="aside" variant="sans" attribution="— from §3, Engineering culture">
+      The smallest real deployment teaches more than six months of staging.
+    </Pull>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — LinkCard (default, full slots)", async ({ mount, page }) => {
+  await mount(
+    <LinkCard
+      href="/work/case"
+      eyebrow="Design"
+      title="Redesigning the onboarding flow"
+      body="A three-month engagement that cut time-to-value by 40%."
+      footer="Read more →"
+    />,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — LinkCard (quiet variant)", async ({ mount, page }) => {
+  await mount(
+    <LinkCard href="/posts/1" variant="quiet" title="Post title" body="Post body copy." />,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — LinkCard (external with sr-only span)", async ({ mount, page }) => {
+  await mount(<LinkCard href="https://example.com" external title="External resource" />);
+  await expectAxeClean(page);
+});
+
+test("a11y — TeamCard (default stacked, all slots)", async ({ mount, page }) => {
+  await mount(
+    <TeamCard
+      portrait={
+        <Portrait
+          src="https://picsum.photos/seed/a11y-tc/800/800"
+          alt="Test person — headshot for a11y scan"
+          aspect="1:1"
+          width={800}
+        />
+      }
+      name="Arian Zargaran"
+      role="Founder, Engineering"
+      bio="Builds production AI systems end-to-end for senior-only consulting practices."
+      contact={<a href="mailto:arian@pouk.ai">arian@pouk.ai</a>}
+    />,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — TeamCard (horizontal layout)", async ({ mount, page }) => {
+  await mount(
+    <TeamCard
+      layout="horizontal"
+      portrait={
+        <Portrait
+          src="https://picsum.photos/seed/a11y-tc-h/400/400"
+          alt="Test person — headshot for a11y scan horizontal"
+          aspect="1:1"
+          width={400}
+        />
+      }
+      name="Arian Zargaran"
+      role="Founder, Engineering"
+    />,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — TeamCard (as='div', minimal)", async ({ mount, page }) => {
+  await mount(
+    <TeamCard
+      as="div"
+      portrait={
+        <Portrait
+          src="https://picsum.photos/seed/a11y-tc-d/800/800"
+          alt="Test person — headshot for a11y scan div"
+          aspect="1:1"
+          width={800}
+        />
+      }
+      name="Arian Zargaran"
+      role="Founder"
+    />,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — FeatureCard (default variant, full slots)", async ({ mount, page }) => {
+  await mount(
+    <FeatureCard
+      icon={
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor" />
+        </svg>
+      }
+      eyebrow="Platform"
+      title="Observability"
+      body="Every inference logged, traced, and alertable."
+      footer={<a href="/docs/observability">Learn more →</a>}
+    />,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — FeatureCard (bordered variant)", async ({ mount, page }) => {
+  await mount(
+    <FeatureCard
+      variant="bordered"
+      title="Secure by default"
+      body="Every pipeline is air-gapped, audited, and compliant."
+    />,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — FeatureCard (as='li' inside ul)", async ({ mount, page }) => {
+  await mount(
+    <ul style={{ listStyle: "none", padding: 0 }}>
+      <FeatureCard as="li" title="List feature" body="Feature description copy." />
+    </ul>,
   );
   await expectAxeClean(page);
 });

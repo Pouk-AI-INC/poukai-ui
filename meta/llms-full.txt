@@ -19,7 +19,7 @@ All tokens live in `src/tokens/tokens.css` on `:root`. Owned exclusively by `pou
 - `--fg: #1d1d1f` — Primary text, wordmark fill, sigil stroke, and the `primary` button background (inverts: `--fg` fill, `--bg` text). The only color allowed for body paragraph text. NEVER use decoratively as a background wash.
 - `--fg-muted: #6e6e73` — Secondary text: captions, footer copy, eyebrow labels, lede paragraphs, hiredBy lines, Stat provenance. NEVER use for primary calls to action. NEVER use as a disabled-state substitute.
 - `--hairline: #d2d2d7` — Dividers, 1px rules, borders. Always applied as a border/border-top/border-bottom, NEVER as a background. Never render thicker than `--hairline-w: 1px`.
-- `--accent: #0071e3` — The brand’s single accent. Roles: status dot fill, link underline-on-hover, focus rings. NEVER use as a surface fill, body text color, or button background. It is a signal color: interactivity and focus only.
+- `--accent: #0071e3` — The brand’s single accent. Roles: status dot fill, link underline-on-hover (the accent layer grows over the resting hairline underline), focus rings. NEVER use as a surface fill, body text color, or button background. It is a signal color: interactivity and focus only. `--accent` is NEVER visible in a resting state — it appears only on hover (animated underline) and on focus-visible (ring).
 - `--accent-glow: rgba(0, 113, 227, 0.18)` — Transparent halo for the available status dot and `::selection`. NEVER use as a container fill or hover state. Never stack it.
 - `--bg-warm-accent: #c0452c` — Editorial warm-accent band background (full-bleed orange). Restraint rules in `meta/brand.md`: at most one warm band per page; never adjacent to another `--bg-warm-accent` band. NEVER use for inline elements or component fills.
 - `--fg-on-warm: #fdf5f0` — Primary text on warm bands. Warm-tinted near-white. The only text color permitted as primary copy over `--bg-warm-accent`. NEVER use over `--bg`.
@@ -38,12 +38,15 @@ All tokens live in `src/tokens/tokens.css` on `:root`. Owned exclusively by `pou
 - `--fs-tagline-intimate: clamp(2rem, 1.25rem + 2.5vw, 3.25rem)` (32-52px) — Hero title at `size="intimate"`. Use only inside the Hero molecule. Never use directly on `h1` outside Hero context.
 - `--fs-display: clamp(3rem, 1.75rem + 4vw, 5.5rem)` (48-88px) — Editorial display rung above `--fs-tagline`. AT MOST ONCE PER PAGE. NOT a heading replacement (the semantic `<h1>` stays on `--fs-tagline` via `<Hero>`). Reserved for editorial display moments where the page opens on a single statement and the Hero pattern is being deliberately replaced — not augmented. Sits 8px below `--fs-stat-large` (96px) so numerals stay loudest.
 - `--fs-statement: clamp(1.75rem, 1.25rem + 2vw, 2.75rem)` (28-44px) — Italic-serif editorial Statement block. Sits between `h2` and `--fs-tagline-intimate`. Used only by the `<Statement>` molecule; not a heading replacement and does not emit any heading element.
+- `--fs-pull: clamp(1.25rem, 1rem + 1vw, 1.625rem)` (20-26px) — Inline editorial pull-quote accent. Above `--fs-body`, below `--fs-statement`. Used only by the `<Pull>` molecule. Fills the gap between body and Statement; a distinct semantic rung with reuse potential for future inline callout components. No `size` variant — one scale carries.
 - `--fs-body: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem)` (17-19px) — Primary reading size.
 - `--fs-meta: 0.875rem` (14px) — Secondary text: captions, nav labels, badge text, hiredBy lines.
 - `--fs-micro: 0.75rem` (12px) — Uppercase labels only. Always paired with letter-spacing: 0.04em and text-transform: uppercase.
 - `--fs-stat: clamp(2.75rem, 2rem + 3vw, 4.5rem)` (44-72px) — Stat numeral at size="md".
 - `--fs-stat-large: clamp(3.5rem, 2.25rem + 5vw, 6rem)` (56-96px) — Stat numeral at size="lg". One per section at most.
 - `--tracking-stat: -0.015em` — Negative letter-spacing for display numerals in Stat only.
+- `--tracking-eyebrow: 0.06em` — Canonical letter-spacing for all Eyebrow labels. The single resolved value across the three previously-divergent inline usages (RoleCard: 0.06em, FailureMode: 0.08em, .micro: 0.04em). At `--fs-meta` (14px) = 0.84px per letter — enough to communicate uppercase structure without tipping airy. See design spec `meta/design/Eyebrow.md §3` for rationale.
+- `--lh-meta: 1.2` — Line-height for meta/eyebrow-scale text. First named line-height token in the system, scoped to the meta register. Matches the value already used on `h2`, `h3`, and `.numeral` throughout the token file. A full `--lh-*` ramp is deferred to a foundations pass.
 - `--fs-card-title: clamp(1.5rem, 1.15rem + 1.2vw, 2rem)` (24-32px) — Card-title rung. Shared by `<RoleCard>`, `<Principle>`, `<FailureMode>` titles. Always rendered in `--font-serif`, `font-weight: 400`. Do NOT use as a heading-level replacement; the title element semantics still come from the consuming page.
 
 ### Spacing (4px base grid)
@@ -164,6 +167,137 @@ Padding and font-size stay hand-tuned per size (no separate padding-token scale)
 - `width` is the canonical source-image width in px — drives the srcset divisors (1, 1.5, 2.34375, 3.75) and the `width`/`height` HTML attrs. Pass the full source resolution, not the display size.
 - `loading` defaults to `"lazy"`; use `"eager"` for above-the-fold portraits. `fetchPriority` defaults to `"auto"`; pair `loading="eager"` with `fetchPriority="high"` for the LCP image. `sizes` defaults to `"100vw"`. `objectPosition` defaults to `"center"`.
 - `src` accepts either a string URL or an object shaped like Astro's `ImageMetadata` (`.src` is extracted). Do NOT pass `import.meta` imports without unwrapping.
+
+### Eyebrow
+- Canonical micro-label atom. Uppercase, tracked (`--tracking-eyebrow: 0.06em`), `--font-sans`, `--fs-meta` (14px), weight 500, `--lh-meta` (1.2).
+- `variant="muted"` (default) — color `--fg-muted`. Standard section/category/role label register.
+- `variant="solid"` — color `--fg`. Full contrast when the label needs more weight.
+- `variant="numbered"` — color `--fg-muted` + activates the inline numeral slot (inline-flex, baseline-aligned, `--space-2` gap). Use with `numeral` prop.
+- `numeral` prop (string, optional) — rendered in a leading `<span>` with `font-variant-numeric: tabular-nums`. e.g. `numeral="FM-03"`, `numeral="01 ·"`.
+- `as` prop — polymorphic root element, defaults to `<span>`. Valid values: `span`, `p`, `div`, `dt`, `h2`, `h3`, `h4`, `h5`, `h6`, `li`. Use `as="h2"` when heading semantics are required at eyebrow scale.
+- `margin: 0` — Eyebrow owns no margin. The consuming molecule owns spacing between Eyebrow and its sibling title.
+- Resolves the drift between `RoleCard.eyebrow` (mono, 12px, 0.06em), `FailureMode.index` (sans, 14px, 0.08em), and `.micro` utility (sans, 12px, 0.04em). Migration to consuming molecules is a follow-up PR.
+- Do NOT use `--accent` on Eyebrow — it is a label, not a link or status indicator.
+- Do NOT add truncation or overflow clipping — the DS does not manage Eyebrow overflow.
+
+### EmailLink
+- Canonical `mailto:` affordance atom. Not a button — it opens a mail client, it does not commit to an outcome. Choose `<EmailLink>` over `<Button asChild><a href="mailto:…">` when the contact register is "reach out" rather than "commit to action."
+- `email` (required string) — The email address. Component always computes `href="mailto:${email}"`. Consumers NEVER pass `href` directly — it is excluded from the prop interface via `Omit<AnchorHTMLAttributes, 'href'>`.
+- `label` (optional string) — Visible link text. Defaults to the `email` string when omitted. When provided, `label` is the accessible name; the email is the href target only.
+- `icon` (optional ReactNode) — Leading icon slot. When present, root shifts to `inline-flex` with `align-items: center` and `gap: --space-2`. When absent, root is a plain inline anchor. Use 14px icons in `--fs-meta` contexts, 16px in `--fs-body` contexts. Pass `aria-hidden="true"` on decorative icons.
+- `qualifier` (optional string) — Trailing role qualifier rendered as ` (qualifier)` in a muted `<span>` inside the anchor. Pass the bare name/role without parentheses. e.g. `qualifier="Arian"` renders "founder@pouk.ai (Arian)".
+- `variant="default"` (default) — `color: --fg`, hover → `--accent`. Use on `--bg` or `--surface` contexts.
+- `variant="muted"` — `color: --fg-muted`, hover → `--fg`. For footer, caption, secondary-copy contexts. Matches existing `.muted-link` treatment in `SiteShell`.
+- Underline inherits the global `a` two-layer underline rule in `tokens.css`. At rest: a 1px `--hairline` underline is always visible (resting discoverability signal). On hover: a 1px `--accent` underline grows left-to-right over the hairline layer via `background-size` transition (`--dur-mid`, `--easing-link`). `<EmailLink>` is a link — same affordance as every other navigational anchor. No underline override.
+- Focus ring: `outline: 2px solid --accent`, `outline-offset: 4px` (link convention — matches global `a:focus-visible`, NOT Button's 2px offset). `border-radius: --radius-1`.
+- `:visited` — no distinct treatment (brand decision; visited state creates false scent on contact links).
+- `:active` — no `translateY` (link, not button).
+- No margin on root — consumer owns spacing.
+- Do NOT use `<EmailLink>` for `tel:` or `sms:` protocols — those get their own atoms.
+- Do NOT compose `<EmailLink>` inside `<Button>` — they are sibling affordances with different registers.
+- Do NOT pass `href` — it is always computed from `email`. The prop is excluded at the TypeScript level.
+
+### Section
+- Canonical page-section wrapper molecule. Owns the vertical rhythm around a section's header block (eyebrow + title + lede) and exposes a children slot for section body content.
+- No visual surface — no background, border, or shadow in default configuration. Structural scaffolding only.
+- `as` prop (default `"section"`) — polymorphic root element. Valid values: `"section"` | `"article"` | `"aside"` | `"div"`. `"section"` is a region landmark when titled; `"article"` for independently distributable content; `"aside"` for tangential content; `"div"` when a landmark would be noise.
+- `eyebrow` (optional `string | ReactNode`) — String values are automatically wrapped in `<Eyebrow>` with default props (`variant="muted"`). ReactNode values are rendered as-is. Never wraps a ReactNode in a second Eyebrow. Always routes through the `<Eyebrow>` atom for consistency.
+- `title` (optional `ReactNode`) — rendered as the element named by `titleAs`. When present, wires `aria-labelledby` on the root for landmark elements.
+- `titleAs` (optional `"h1" | "h2" | "h3"`, default `"h2"`) — heading level for the title element. Default is `h2` (page subdivisions below a Hero which owns the h1). Pass `"h1"` when Section is at the top of a page without a Hero; `"h3"` for nested subdivision contexts.
+- `lede` (optional `ReactNode`) — supporting copy below the title. String values are wrapped in `<p className="lede">` (applies `color: var(--fg-muted)` and `max-width: 36rem` via the existing `.lede` class in `tokens.css`). ReactNode values are rendered as-is.
+- `size` (`"default"` | `"tight"`, default `"default"`) — block padding variant. `"default"` = `--space-16` (64px) top + bottom; `"tight"` = `--space-12` (48px) top + bottom.
+- `children` — section body content. Section applies no styling to children — no max-width, no typography. The body is the consumer's space.
+- **Empty header guard**: if `eyebrow`, `title`, and `lede` are all absent, the header wrapper div is not rendered.
+- **`aria-labelledby` wiring**: when `title` is present and `as` is a landmark element (`"section"` / `"article"` / `"aside"`), the title element receives an auto-generated `id` (via `useId()`) and the root receives `aria-labelledby`. Skipped for `as="div"`.
+- Header block max-width: `var(--hero-max)` (38rem). Children slot has no max-width.
+- Header gaps: eyebrow→title `--space-2` (8px); title→lede `--space-4` (16px). Header→children gap: `--space-12` (48px).
+- Global `h2` bottom margin is zeroed in Section's CSS scope (`margin: 0` on `.title`) — Section's flex layout controls spacing instead.
+- No `bleed` prop. No `align` prop. Both excluded from spec — structural wrapper, not visual band.
+- Do NOT nest Section inside Section. Would double block padding and break vertical rhythm.
+- Do NOT use Section as a card, callout, or decorative container. It carries no visual surface.
+- Do NOT add `aria-labelledby` manually when a title is provided — Section wires it automatically for landmark elements.
+
+### Pull
+- Inline editorial pull-quote molecule. Lives inside long-form prose between paragraphs. NOT a page-level molecule (unlike Hero or Statement).
+- Root element: `<blockquote>` by default (correct HTML for quoted material). Use `as="aside"` only when Pull is an extracted editorial accent that is not a literal quotation from an external source.
+- `variant="serif"` (default) — Instrument Serif italic at `--fs-pull` (20–26px fluid). Use for editorial long-form content, article pages, customer stories.
+- `variant="sans"` — Geist roman at `--fs-pull`. Use for technical or operator-grade content where Instrument Serif feels mismatched.
+- `--fs-pull: clamp(1.25rem, 1rem + 1vw, 1.625rem)` (20–26px) — the only scale. No `size` prop. A `large` variant was explicitly rejected; the page-level editorial scale is `<Statement>`.
+- Left rule: `border-inline-start: 3px solid var(--hairline)`. 3px is a brand-locked constant (not `--hairline-w`). Decorative typographic punctuation, not a layout divider.
+- `padding-inline-start: var(--space-4)` (16px) — distance from rule to body text.
+- `margin-block: var(--space-8)` (32px) — breathing room above + below. Adjacent `<p>` margin-bottom adds 48px total gap (non-collapsing). This is correct editorial rhythm at --fs-pull scale.
+- `max-width: var(--hero-max)` (38rem) — matches the article text column. Pull never exceeds prose measure.
+- `cite` prop — URL mapped to HTML `cite` attribute on `<blockquote>`. Machine-readable only. SILENTLY IGNORED when `as="aside"` (not a valid attribute on aside).
+- `attribution` prop (optional ReactNode) — visible trailing attribution line. Renders as `<footer>` inside `<blockquote>` (per HTML5 spec; scoped, not contentinfo landmark). Renders as `<p>` inside `<aside>`. Always `--fs-meta`, `--fg-muted`, italic regardless of variant.
+- No decorative `"` quote glyph — the left rule is the typographic punctuation.
+- Do NOT place Pull inside a `<Hero>`. Do NOT stack Pull with `<Statement>` on the same surface. Do NOT use Pull for person identity attribution — use `<Quote>` (once shipped).
+- Multiple Pulls per page are permitted. More than 3 is an editorial judgment, not a DS constraint.
+- Screen reader: `<blockquote>` is announced as a quotation; `<aside>` adds a complementary landmark — avoid `as="aside"` in articles with multiple Pulls (landmark noise).
+
+### LinkCard
+- Canonical interactive card primitive. The entire card surface is a single click target (`<a>` root). Use for navigational index pages (`/work`, `/posts`, `/case-studies`) where each grid item routes to a destination.
+- Root element: `<a>` by default. When `asChild={true}`, root becomes a Radix `Slot` — pass a framework router `<Link>` as the child. Identical to the `Button` `asChild` pattern.
+- `href` is required when `asChild` is false. A runtime `console.error` fires in development if `href` is absent and `asChild` is false.
+- Do NOT pass both `href` and `asChild={true}`. When `asChild` is true the child element owns the href.
+- `variant="default"` (default) — `--surface` background, `1px solid --hairline` border, `--radius-3` (8px) corners, `--space-8` (32px) inset padding all sides. Use in grid contexts.
+- `variant="quiet"` — `--bg` background (no fill), hairline rule top only (`border-top: 1px solid --hairline`), no radius, padding-block `--space-4`, padding-inline `0`. Use in dense vertical list contexts.
+- Hover: `border-color` shifts to `--accent`. Transition: `border-color var(--dur-mid) var(--easing-link)`. For quiet variant, `border-top-color` shifts.
+- `:focus-visible`: `outline: 2px solid var(--accent); outline-offset: 4px`. Default variant adds `border-radius: --radius-3` on the outline to match card shape. Quiet variant: `border-radius: 0`.
+- `:active`: `transform: translateY(1px)` at `--dur-press` (80ms). Both variants. Tactile press response matching `<Button>`.
+- `eyebrow` (optional `string | ReactNode`) — String → auto-wrapped in `<Eyebrow variant="muted">`. ReactNode → pass-through (consumer owns configuration). Same discriminant as `<Section>`: `typeof eyebrow === 'string'`.
+- `title` (required `ReactNode`) — primary content and accessible name anchor. Renders as `titleAs` element. Typography: `--fs-card-title` (24–32px fluid), `--font-sans`, weight 500, `line-height: 1.3`, `letter-spacing: -0.005em`. Margin zeroed inside LinkCard flex scope (overrides global h3 margin).
+- `titleAs` (`"h2" | "h3" | "h4"`, default `"h3"`) — heading element. Default `h3` is correct when page has `<h1>` (Hero) and `<h2>` (Section above the grid). Pass `"h2"` when no preceding h2 exists.
+- `body` (optional `ReactNode`) — string → wrapped in `<p>`; ReactNode → pass-through. `--fs-body`, `--fg-muted`, `line-height: 1.55`.
+- `footer` (optional `ReactNode`) — pushed to card bottom via flex spacer (`flex: 1`). Defaults to `--fg-muted` color, `--fs-meta` font size. ReactNode pass-through; consumer content can override.
+- `icon` (optional `ReactNode`) — absolutely positioned at `top: --space-8; right: --space-8` within card padding box. `pointer-events: none`. Consumer-supplied. Conventional: `<ArrowUpRight size={16} />` from `lucide-react` for external links.
+- `external` — when true: adds `target="_blank"`, `rel="noopener noreferrer"`, and appends a visually-hidden `<span>(opens in new tab)</span>` for screen readers. Does NOT auto-inject an icon — pass via `icon` slot.
+- Global `<a>` underline animation (`background-image` grow) is suppressed on the card root via `background-image: none; padding-bottom: 0`. The card's sole hover signal is the border-color shift.
+- **No nested interactive elements.** A `<button>` or `<a>` inside a LinkCard is a WCAG failure (nested interactivity). Footer tags and inline labels must be non-interactive (`<span>`, plain text). This is documented as a hard constraint, not a component-level enforcement.
+- Accessible name is derived from text content — eyebrow + title + body all contribute. Body copy should be meaningful, not boilerplate ("Click to learn more" produces a poor accessible name).
+- In a CSS Grid context: set `align-items: stretch` on the grid container and `height: 100%` on the LinkCard root so all cards in a row share the same height. The footer flex spacer then aligns footers to the same baseline.
+- Do NOT mix `variant="default"` and `variant="quiet"` in the same grid — incoherent visual rhythm.
+- Do NOT put `<Button>` or any interactive element inside a LinkCard.
+- Do NOT use LinkCard for non-navigational content. Use `RoleCard` (structural, no click target) for role descriptions.
+
+### TeamCard
+- Canonical person tile molecule. Renders a single team member as a brand object: portrait + name + role + optional bio + optional contact affordance. Operator-grade register — practitioner credential, not a social media card.
+- Root element: `<article>` by default (correct HTML for a self-contained, independently distributable content item). Polymorphic via `as` prop: `"article"` | `"section"` | `"div"`.
+- `aria-labelledby` is wired automatically from the root landmark element to the name heading's `id` (via `useId()`). Skipped when `as="div"` — a `<div>` carries no landmark role.
+- `portrait` (required `ReactNode`) — pass a fully-configured `<Portrait>` instance. TeamCard does NOT accept `portraitSrc` — Portrait's API is authoritative for `src`, `alt`, `aspect`, `width`, and `sizes`. Never pass a raw `<img>`.
+- `name` (required `ReactNode`) — person's name. Rendered as the element specified by `nameAs`. Default `nameAs="h3"` is correct inside a `<Section>` (h2) on a page with a Hero (h1). Override to `"h2"` for standalone person pages; `"h4"` for deeply nested contexts.
+- `role` (required `ReactNode`) — short role/title descriptor. Rendered as `<p>` at `--fs-meta` (14px), `color: var(--fg-muted)`. No uppercase treatment — role is read at prose speed.
+- `bio` (optional `ReactNode`) — supporting prose paragraph. Rendered as `<p>` at `--fs-body`, `color: var(--fg)`, `line-height: 1.55`. When absent, no empty element is emitted.
+- `contact` (optional `ReactNode`) — any contact affordance. Standard usage: `<EmailLink email="…" variant="muted" />`. Slot is untyped — LinkedIn links, GitHub handles, etc. work without spec changes. TeamCard provides no interaction states; the inner component owns them.
+- `eyebrow` (optional `string | ReactNode`) — string values are automatically wrapped in `<Eyebrow variant="muted">`. ReactNode values are rendered as-is (escape hatch). Never double-wraps a ReactNode. In grids, prefer placing the eyebrow in the Section header rather than repeating it on every card.
+- `layout` (`"stacked"` | `"horizontal"`, default `"stacked"`) — portrait-text spatial relationship. `"stacked"`: portrait above, text below (grid-context default). `"horizontal"`: portrait left at fixed `5rem` width, text block right with `--space-6` gap; collapses to stacked below 768px.
+- **No padding, no border, no background.** TeamCard is a content tile, not a chrome tile. The consumer's grid owns the column gutter. If a surface variant is needed, use `className` override at the consumer layer — it is not a DS variant.
+- Gap stack (stacked layout): eyebrow→portrait `--space-3` (12px), portrait→name `--space-4` (16px), name→role `--space-2` (8px), role→bio `--space-4` (16px), bio→contact `--space-8` (32px), role→contact (no bio) `--space-8` (32px).
+- Contrast: name heading `--fg` on `--bg` = 16.29:1 (AAA). Role `--fg-muted` on `--bg` = 4.91:1 (AA normal at 14px). Bio `--fg` on `--bg` = 16.29:1 (AAA).
+- Do NOT pass `portraitSrc` — the prop does not exist. Portrait's API is authoritative.
+- Do NOT make TeamCard interactive (`href`, `onClick`). It is not a link. Consumer wraps in `<a>` or `<Link>` if needed and owns that interaction pattern.
+- Do NOT nest TeamCard inside Hero. Hero is the page h1 moment; heading-level conflict results.
+- Do NOT compose TeamCard with RoleCard. They are sibling molecules with distinct semantics (person vs. function).
+
+### FeatureCard
+- Canonical structural feature-grid tile. Use for capability, service, or feature grids where items are peers (not a numbered sequence) and none of the tiles are navigational destinations.
+- `as` prop (default `"article"`) — polymorphic root element. Valid values: `"article"` | `"section"` | `"div"` | `"li"`. Use `"li"` inside a `<ul>` feature list; `"section"` when region landmark semantics are required; `"div"` when landmark semantics would be noise. Consumer is responsible for wrapping `as="li"` FeatureCards in a `<ul>`.
+- `icon` (optional ReactNode) — decorative icon. FeatureCard wraps it in `<span aria-hidden="true">`. Sets `color: currentColor` on the wrapper so the icon inherits `--fg`. Recommended icon sizes: `size={24}` or `size={32}` from lucide-react. Consumer still passes `aria-hidden="true"` on the icon node for clarity, but the wrapper guarantees screen readers skip it regardless.
+- `eyebrow` (optional `string | ReactNode`) — String → auto-wrapped in `<Eyebrow variant="muted">`. ReactNode → rendered as-is (no double-wrap). Same string-convention as Section, LinkCard, and TeamCard.
+- `title` (required ReactNode) — feature name. Rendered as the element named by `titleAs`. `"h1"` is intentionally excluded — a feature tile is never a page heading.
+- `titleAs` (optional `"h2" | "h3" | "h4"`, default `"h3"`) — heading level. `"h3"` is correct for a grid of tiles under a `<Section>` (h2) on a page with a `<Hero>` (h1).
+- `body` (required ReactNode) — feature description. String → wrapped in `<p style="margin:0">` (suppresses global `p` bottom-margin double-stack inside flex column). ReactNode → rendered as-is.
+- `footer` (optional ReactNode) — rendered inside a wrapper div with default `color: var(--fg-muted)` and `font-size: var(--fs-meta)`. When absent, no element is emitted and no gap is created.
+- `variant` (`"default"` | `"bordered"`, default `"default"`) — `"default"` is transparent, no border, no radius. `"bordered"` adds `--surface` background, `1px solid --hairline` border, `--radius-3` corners.
+- Padding: `--space-6` (24px) on all four sides in both variants — single value prevents layout shift when switching variants at runtime.
+- Gap stack: icon→eyebrow/title `--space-6` (24px); eyebrow→title `--space-2` (8px); title→body `--space-3` (12px); body→footer `--space-6` (24px).
+- `aria-labelledby` wired on `article` and `section` roots to the title's auto-generated id (via `useId()`). Omitted for `div` and `li` — neither carries a landmark role.
+- No internal flex spacer. Footer alignment in a grid requires composition: `align-items: stretch` on the grid, `height: 100%` on the card root, `margin-top: auto` on the footer wrapper in consumer surface CSS.
+- No states, no hover, no interactivity. FeatureCard is structural only. For an interactive tile, use `<LinkCard>`.
+- Do NOT mix `default` and `bordered` variants in the same grid — incoherent visual rhythm.
+- Do NOT use FeatureCard for navigational tiles — use `<LinkCard>`.
+- Do NOT use FeatureCard for sequenced/numbered items — use `<Principle>` or `<FailureMode>`.
+- Do NOT pass `titleAs="h1"` — a feature tile is never a page heading. The prop type excludes it.
+- Do NOT compose FeatureCard with RoleCard in the same grid. RoleCard carries sequencing semantics that conflict with FeatureCard's peer-item register.
 
 ### SiteShell
 - Do NOT nest SiteShell inside another SiteShell. It is min-height: 100dvh.
