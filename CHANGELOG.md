@@ -1,5 +1,126 @@
 # @poukai-inc/ui
 
+## 0.17.0
+
+### Minor Changes
+
+- a1557c0: feat(atoms): add EmailLink atom
+
+  New `<EmailLink>` atom — the canonical `mailto:` affordance for the Poukai design system.
+  - `email` prop computes `href="mailto:${email}"` — consumers never pass `href` directly.
+  - `label` prop (optional) overrides visible text; defaults to the email string.
+  - `icon` prop (optional leading ReactNode) — shifts root to `inline-flex` when present.
+  - `qualifier` prop (optional) renders a trailing muted ` (qualifier)` span inside the anchor.
+  - `variant="default"` (default) — `--fg` → `--accent` on hover.
+  - `variant="muted"` — `--fg-muted` → `--fg` on hover; matches existing SiteShell `.muted-link` treatment.
+  - Persistent `text-decoration: underline` (intentional brand override of the global animated grow-underline — a `mailto:` is not a navigational link).
+  - Focus ring: 2px solid `--accent`, 4px offset (link convention, not button).
+  - No new tokens — built entirely from the existing token vocabulary.
+  - Exports: `EmailLink`, `EmailLinkProps`, `EmailLinkVariant` from `@poukai-inc/ui` and `@poukai-inc/ui/atoms`.
+
+- a1557c0: Add `Eyebrow` atom, `--tracking-eyebrow` + `--lh-meta` tokens, and `displayName` backfill.
+
+  **New component — `Eyebrow`**
+
+  Canonical micro-label atom (`src/atoms/Eyebrow/`). Resolves the three independently-authored eyebrow patterns in `RoleCard`, `FailureMode`, and the global `.micro` utility into one shape: `--tracking-eyebrow: 0.06em`, `--fs-meta` (14px), `--font-sans`, weight 500.
+  - `variant` prop: `"muted"` (default, `--fg-muted`), `"solid"` (`--fg`), `"numbered"` (muted + inline numeral slot).
+  - `numeral` prop (string): leading index rendered with `font-variant-numeric: tabular-nums` and `--space-2` gap.
+  - `as` prop: polymorphic root element (`span` default; `p`, `div`, `dt`, `h2`–`h6`, `li`). Follows the Statement pattern.
+  - `margin: 0` — consuming context owns spacing.
+  - Exports: `Eyebrow`, `EyebrowProps`, `EyebrowVariant` from root, `./atoms` subpath.
+
+  **New tokens** (additive — minor bump)
+  - `--tracking-eyebrow: 0.06em` — Canonical letter-spacing for Eyebrow labels. Resolves the 0.04/0.06/0.08em drift across existing molecules.
+  - `--lh-meta: 1.2` — First named line-height token in the system, scoped to the meta/eyebrow register.
+
+  **`displayName` backfill** (no API change — patch-level, bundled here for cleanliness)
+
+  Added `Component.displayName = "Component"` to: `Button`, `Stat`, `StatusBadge`, `Wordmark`, `FailureMode`, `Principle`, `RoleCard`, `SiteShell`. Matches the pattern already on `Hero`, `Statement`, `Portrait`, and the new `Eyebrow`.
+
+  **Migration notes**
+
+  `RoleCard`, `FailureMode` inline eyebrow patterns will adopt `<Eyebrow>` in a follow-up PR. No existing molecule output changes in this release.
+
+- 935f64d: Add `FeatureCard` molecule — canonical structural feature-grid tile.
+
+  New component `<FeatureCard>` at `src/molecules/FeatureCard/`. Canonical primitive for capability and service grids. Presents a single feature as a bounded content object: optional icon, optional eyebrow, required title, required body, optional footer. Polymorphic via `as` prop (`"article"` | `"section"` | `"div"` | `"li"`). Two variants: `"default"` (transparent, no border) and `"bordered"` (`--surface` bg, `--hairline` border, `--radius-3`). `aria-labelledby` wired on `article`/`section` roots; omitted for `div`/`li` per spec. Icon slot wrapped in `aria-hidden="true"` span. String eyebrow auto-wrapped in `<Eyebrow variant="muted">`; ReactNode eyebrow passed through. String body auto-wrapped in `<p style="margin:0">`. No new tokens — built entirely from the existing vocabulary.
+
+- 935f64d: Add `LinkCard` molecule — canonical interactive card primitive.
+
+  The entire card surface is a single `<a>` click target. Designed for navigational index pages (`/work`, `/posts`, `/case-studies`) where each grid item routes to a destination.
+
+  **Props:** `href`, `asChild` (Radix Slot, identical to `Button` pattern), `eyebrow` (string → auto-wraps in `<Eyebrow variant="muted">`; ReactNode → pass-through), `title` (required), `titleAs` (`"h2" | "h3" | "h4"`, default `"h3"`), `body`, `footer`, `icon`, `external`, `variant`.
+
+  **Variants:**
+  - `default` — `--surface` background, `1px solid --hairline` border, `--radius-3` corners, `--space-8` inset padding. Use in grid contexts.
+  - `quiet` — `--bg` background, hairline rule top only, no radius, block padding only. Use in dense vertical list contexts.
+
+  **Interactions:** hover shifts border-color to `--accent` (`--dur-mid` / `--easing-link`); `:active` presses `translateY(1px)` at `--dur-press`; `:focus-visible` ring 2px solid `--accent` with `outline-offset: 4px`.
+
+  **Accessibility:** `external` prop adds `target="_blank"`, `rel="noopener noreferrer"`, and a visually-hidden `(opens in new tab)` span. Global `<a>` underline animation is suppressed on the card root. No nested interactive elements — documented as a hard constraint.
+
+  **New utility:** `.sr-only` visually-hidden class shipped in `LinkCard.module.css` (not yet in `tokens.css`; surfaced to `poukai-design` for a future token pass).
+
+- 935f64d: Link resting-state discoverability + atom inversion fixes.
+
+  **Global `<a>` rule** — links now carry a persistent `--hairline`-colored
+  underline at rest. On hover, an `--accent`-colored underline grows over the
+  top via a two-layer CSS gradient. This gives every link a visible affordance
+  in its resting state without violating the `--accent`-is-signal-only rule.
+  Cascade-affects every anchor in the system (EmailLink, SiteShell nav, Hero
+  CTAs). Components that suppress the global rule via `background-image: none`
+  (LinkCard root + title, SiteShell Wordmark, `.muted-link`) are unaffected.
+  Brand decision logged in `meta/brand.md`.
+
+  **Stat** — `.value`, `.caption`, and `.source` now inherit `currentColor`
+  (captions via `color-mix(in srgb, currentColor 65%, transparent)` for the
+  muted register). Stat is now invertable: wrap with `color: var(--bg)` on a
+  `background: var(--fg)` parent and the numeral + caption render correctly
+  on the dark surface. Previously hardcoded `--fg` / `--fg-muted` on children
+  suppressed inheritance.
+
+  **EmailLink** — dropped the persistent underline override. EmailLink now
+  inherits the global `<a>` two-layer underline behavior. Removes the brand
+  divergence between mailto links and every other link in the system.
+
+- a1557c0: Add `Pull` molecule — inline editorial pull-quote primitive.
+
+  New component `<Pull>` at `src/molecules/Pull/`. Left-ruled blockquote accent for inline long-form prose. Supports `variant="serif"` (Instrument Serif italic, default) and `variant="sans"` (Geist roman), polymorphic `as="blockquote" | "aside"`, optional `attribution` slot (renders as `<footer>` in blockquote, `<p>` in aside), and native `cite` attribute pass-through.
+
+  New token `--fs-pull: clamp(1.25rem, 1rem + 1vw, 1.625rem)` (20–26px fluid) fills the gap between `--fs-body` (17–19px) and `--fs-statement` (28–44px).
+
+- a1557c0: Add Section molecule — canonical page-section wrapper consuming Eyebrow atom.
+
+  `<Section>` owns the vertical rhythm around a section's header block (eyebrow + title + lede) and exposes a children slot for body content. Polymorphic `as` prop (`section` / `article` / `aside` / `div`), `titleAs` heading-level swap, `size="tight"` padding variant, automatic `aria-labelledby` wiring for landmark elements, and empty-header guard. Constructed entirely from the existing token vocabulary — no new tokens.
+
+- 935f64d: Add `TeamCard` molecule — canonical person tile.
+
+  `<TeamCard>` surfaces a single team member as a brand object: portrait, name, role, optional bio, and optional contact affordance. Intended for /about and /team page contexts.
+
+  **API surface:**
+
+  ```tsx
+  <TeamCard
+    portrait={<Portrait src="…" alt="…" aspect="1:1" width={800} />}
+    name="Arian Zargaran"
+    role="Founder, Engineering"
+    bio="Builds production AI systems end-to-end."
+    contact={<EmailLink email="arian@pouk.ai" variant="muted" />}
+    eyebrow="Founding team"
+    layout="stacked" // "stacked" | "horizontal"
+    nameAs="h3" // "h2" | "h3" | "h4"
+    as="article" // "article" | "section" | "div"
+  />
+  ```
+
+  **Key design decisions:**
+  - No padding, no border, no background — content tile, not chrome tile. Consumer's grid owns the column gutter.
+  - `layout="horizontal"` pins portrait at `5rem` width; collapses to stacked below 768px.
+  - `aria-labelledby` wired automatically on landmark roots (`article`, `section`); omitted on `div`.
+  - Eyebrow string convention (auto-wrap in `<Eyebrow variant="muted">`) matches `<Section>` and `<Pull>`.
+  - `portrait` slot accepts `ReactNode` only — no `portraitSrc` shortcut. Portrait's API is authoritative.
+  - No new tokens. Constructed entirely from the existing vocabulary.
+
 ## 0.16.1
 
 ### Patch Changes
