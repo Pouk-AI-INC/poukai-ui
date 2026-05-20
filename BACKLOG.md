@@ -144,9 +144,14 @@ build/exports, docs/coverage. CRITICALs already promoted to 🔴 Blocking.
 - [x] **Fix wrong fallback in `src/atoms/Button/Button.module.css`.**
       Replaced `var(--radius-2, 8px)` with `var(--radius-2)` so the token is
       authoritative; the wrong 8px fallback is gone.
-- [ ] **Add `displayName` to all `forwardRef` components.** Currently set on
-      Hero/Statement/Portrait only; missing on Button, Stat, StatusBadge,
-      Wordmark, FailureMode, Principle, RoleCard, SiteShell.
+- [x] **Add `displayName` to all `forwardRef` components.** Exhaustive sweep
+      confirmed all 25 forwardRef components already carry displayName: atoms —
+      Button, Stat, Avatar, Eyebrow, EmailLink, Wordmark, Tag, StatusBadge;
+      molecules — RoleCard, Section, FieldNote, Quote, LinkCard, FeatureCard,
+      Pull, Portrait, Statement, Principle, TeamCard, FailureMode, Hero;
+      organisms — Footer, Dialog (Root/Trigger/Portal/Overlay/Content/Title/
+      Description/Close), DialogBasic, SiteShell. No code changes required;
+      the BACKLOG entry was stale.
 - [x] **Document polymorphic-prop conventions.** Documented in `meta/conventions/polymorphic-props.md`.
 - [ ] **Add `args` / `argTypes` to story default exports** for FailureMode,
       Portrait, Principle, RoleCard, Statement, SiteShell — currently only
