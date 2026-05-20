@@ -166,9 +166,11 @@ test("a11y — tone='success'", async ({ mount, page }) => {
   expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
 });
 
-test("a11y — with icon and action (warning, on-warm text)", async ({ mount, page }) => {
-  // On warm tones (warning/danger), action text must use --fg-on-warm for contrast.
-  // A plain <button> with explicit on-warm color is the correct pattern here.
+test("a11y — with icon and action (warning, on-warning text)", async ({ mount, page }) => {
+  // Warning tone now uses the status-tier --bg-warning surface (cream).
+  // Action text must use --fg-on-warning (deep brown) for AA contrast on
+  // that surface — the editorial --fg-on-warm token (warm near-white) is
+  // 1.01:1 over --bg-warning and only correct over --bg-warm-accent.
   await mount(
     <Banner
       tone="warning"
@@ -183,7 +185,7 @@ test("a11y — with icon and action (warning, on-warm text)", async ({ mount, pa
           style={{
             background: "none",
             border: "none",
-            color: "var(--fg-on-warm)",
+            color: "var(--fg-on-warning)",
             cursor: "pointer",
             fontFamily: "var(--font-sans)",
             fontSize: "var(--fs-meta)",
