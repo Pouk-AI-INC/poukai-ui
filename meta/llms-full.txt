@@ -36,7 +36,6 @@ All tokens live in `src/tokens/tokens.css` on `:root`. Owned exclusively by `pou
 - `--font-mono: "Geist Mono", ui-monospace, …` — Used for Stat source lines and RoleCard eyebrow labels. Encodes "reference" or "label" semantics.
 - `--fs-tagline: clamp(2.25rem, 1.5rem + 3.5vw, 4.25rem)` (36-68px) — The h1 display scale. Used exactly once per page for the Hero title.
 - `--fs-tagline-intimate: clamp(2rem, 1.25rem + 2.5vw, 3.25rem)` (32-52px) — Hero title at `size="intimate"`. Use only inside the Hero molecule. Never use directly on `h1` outside Hero context.
-- `--fs-display: clamp(3rem, 1.75rem + 4vw, 5.5rem)` (48-88px) — Editorial display rung above `--fs-tagline`. AT MOST ONCE PER PAGE. NOT a heading replacement (the semantic `<h1>` stays on `--fs-tagline` via `<Hero>`). Reserved for editorial display moments where the page opens on a single statement and the Hero pattern is being deliberately replaced — not augmented. Sits 8px below `--fs-stat-large` (96px) so numerals stay loudest.
 - `--fs-statement: clamp(1.75rem, 1.25rem + 2vw, 2.75rem)` (28-44px) — Italic-serif editorial Statement block. Sits between `h2` and `--fs-tagline-intimate`. Used only by the `<Statement>` molecule; not a heading replacement and does not emit any heading element.
 - `--fs-pull: clamp(1.25rem, 1rem + 1vw, 1.625rem)` (20-26px) — Inline editorial pull-quote accent. Above `--fs-body`, below `--fs-statement`. Used only by the `<Pull>` molecule. Fills the gap between body and Statement; a distinct semantic rung with reuse potential for future inline callout components. No `size` variant — one scale carries.
 - `--fs-body: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem)` (17-19px) — Primary reading size.
@@ -152,10 +151,12 @@ Padding and font-size stay hand-tuned per size (no separate padding-token scale)
 ### Principle
 - Numeral convention: lowercase Roman numerals with trailing period ("i.", "ii.", "iii.").
 - Numeral is aria-hidden. Min 2 Principles per use.
+- Distinct from `FailureMode`: `Principle.numeral` uses Roman numerals (i, ii, iii) for editorial / philosophical sequencing. The two components encode different semantic registers — do not conflate or rename either prop to match the other.
 
 ### FailureMode
 - index is typed number, auto-formats as zero-padded ("01"). Do NOT pass as string.
 - Index span is aria-hidden. Titles should be declarative noun phrases.
+- Distinct from `Principle`: `FailureMode.index` + `indexLabel` use Arabic-numeral integer indices with optional formatted labels (e.g. "FM-01") for enumerated failure cases. The two components encode different semantic registers — do not conflate or rename either prop to match the other.
 
 ### Statement
 - Editorial italic-serif block at `--fs-statement` (28-44px), `line-height: 1.2`, `letter-spacing: -0.005em`, `text-wrap: balance`. Not a heading element; emits no `<h1>`–`<h6>`.

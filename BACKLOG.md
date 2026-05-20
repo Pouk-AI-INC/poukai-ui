@@ -227,8 +227,13 @@ build/exports, docs/coverage. CRITICALs already promoted to 🔴 Blocking.
 - [x] **Prune stale `BACKLOG.md` "Done" entries** Done in this same pass.
 - [x] **Decide on `@radix-ui/react-dialog` dependency.** Resolved by shipping
       `Dialog` + `DialogBasic` organism in v0.18.0. The dep is now used.
-- [ ] **Reconcile sequential-marker prop names.** `FailureMode.index` +
-      `indexLabel` vs `Principle.numeral` for the same concept.
+- [x] **Reconcile sequential-marker prop names.** `FailureMode.index` +
+      `indexLabel` vs `Principle.numeral` — kept as-is; the semantic difference is
+      intentional. `Principle.numeral` uses Roman numerals (i, ii, iii) for editorial /
+      philosophical sequencing; `FailureMode.index` + `indexLabel` use Arabic-numeral
+      integer indices with optional formatted labels (e.g. "FM-01") for enumerated
+      failure cases. Documented the distinction in both `### Principle` and
+      `### FailureMode` sections of `meta/llms-full.txt`.
 - [ ] **Make the Portrait dev-mode-guard test non-vacuous.** Current test
       passes trivially under `NODE_ENV=test` without exercising the guard.
 
@@ -241,12 +246,15 @@ build/exports, docs/coverage. CRITICALs already promoted to 🔴 Blocking.
 - [ ] **Move `lede` (`Hero.tsx:136`) and `muted-link` (`SiteShell.tsx:86`)
       global classes into their respective CSS Modules** — only places where
       a global utility leaks into component JSX.
-- [ ] **Fix `.ladle/config.mjs` `defaultStory: "showcase-overview--index"`** —
-      route doesn't exist (`System.stories.tsx` exports `All`), so `pnpm dev`
-      lands on 404.
-- [ ] **Resolve orphaned tokens** — `--fs-wordmark`, `--space-32`, `--fs-display`
-      defined but unreferenced. Drop or wire up (`--fs-wordmark` likely
-      intended for the Wordmark atom, which uses a `height` prop instead).
+- [x] **Fix `.ladle/config.mjs` `defaultStory: "showcase-overview--index"`** —
+      Fixed: `System.stories.tsx` has `title: "System / Reference"` and exports `All`,
+      giving the Ladle id `system-reference--all`. Updated `defaultStory` to that value.
+- [x] **Resolve orphaned tokens** — Grepped all of `src/` for `var(--fs-wordmark)`,
+      `var(--space-32)`, `var(--fs-display)` outside `tokens.css`.
+      `--fs-wordmark` and `--space-32` are referenced in showcase stories
+      (`TypeScale.tsx`, `SpacingScale.tsx`, `Tokens.stories.tsx`) — kept.
+      `--fs-display` had zero references anywhere outside `tokens.css`; dropped from
+      `tokens.css` and from `meta/llms-full.txt`.
 - [x] **Pick one body line-height.** Resolved by tokenizing both values:
       `--lh-body: 1.55` (canonical — global body, RoleCard, Statement, FieldNote,
       LinkCard, FeatureCard, TeamCard, Dialog) and `--lh-body-relaxed: 1.6`
