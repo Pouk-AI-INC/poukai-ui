@@ -78,14 +78,19 @@ test("loading and fetchpriority attributes are set correctly on img", async ({ m
   await expect(img).toHaveAttribute("fetchpriority", "high");
 });
 
-test("dev-mode throws on empty alt — guard actually fires", async ({ mount }) => {
-  // playwright-ct.config.ts sets `define: { "import.meta.env.DEV": "true" }` so
-  // the guard executes in CT builds. This test confirms the throw path is active:
-  // mounting with alt="" must reject. If the guard is removed this test will fail
-  // because mount() will resolve instead of rejecting.
-  await expect(
-    mount(<Portrait src={VALID_SRC} alt="" aspect="3:4" width={1800} />),
-  ).rejects.toThrow();
+test("dev-mode throws on empty alt — guard actually fires", async ({ mount, page }) => {
+  // The guard executes in CT builds (playwright-ct.config.ts sets
+  // `define: { "import.meta.env.DEV": "true" }`). When the component throws
+  // during render, Playwright CT surfaces it as a page-level error event
+  // rather than a Promise rejection from `mount()`. Listen for the error
+  // and assert the message references the alt-text requirement.
+  const errors: string[] = [];
+  page.on("pageerror", (err) => errors.push(err.message));
+  await mount(<Portrait src={VALID_SRC} alt="" aspect="3:4" width={1800} />).catch(() => {
+    // mount may resolve or reject depending on CT version; either is fine —
+    // the assertion below is on the captured page error.
+  });
+  await expect.poll(() => errors.some((m) => /alt/i.test(m)), { timeout: 2_000 }).toBeTruthy();
 });
 
 test("sizes prop flows through to both source elements", async ({ mount }) => {
