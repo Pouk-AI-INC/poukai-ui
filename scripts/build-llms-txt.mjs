@@ -54,6 +54,7 @@ const COMPONENTS = {
     "Input",
     "Textarea",
     "Field",
+    "Banner",
   ],
   organisms: ["SiteShell", "Footer", "Dialog", "DialogBasic", "Tabs", "TabsBasic"],
 };

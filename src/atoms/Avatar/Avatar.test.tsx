@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Avatar } from "./Avatar";
 
 /* ---------- image mode ---------- */
@@ -142,38 +141,4 @@ test("ref forwarded to root span", async ({ mount, page }) => {
   expect(tagName).toBe("span");
 });
 
-/* ---------- axe a11y ---------- */
-
-const SUPPRESSED = ["landmark-one-main", "page-has-heading-one", "region"] as const;
-
-async function expectAxeClean(page: import("@playwright/test").Page) {
-  const { violations } = await new AxeBuilder({ page }).disableRules([...SUPPRESSED]).analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-}
-
-test("a11y — image mode with alt", async ({ mount, page }) => {
-  await mount(<Avatar mode="image" src="/test.jpg" alt="Test person" />);
-  await expectAxeClean(page);
-});
-
-test("a11y — initials mode with name", async ({ mount, page }) => {
-  await mount(<Avatar mode="initials" initials="AZ" name="Arian Zargaran" />);
-  await expectAxeClean(page);
-});
-
-test("a11y — empty mode with name", async ({ mount, page }) => {
-  await mount(<Avatar name="Unknown person" />);
-  await expectAxeClean(page);
-});
-
-test("a11y — all sizes, all shapes", async ({ mount, page }) => {
-  await mount(
-    <div>
-      <Avatar mode="initials" initials="AZ" name="Arian Zargaran" size="sm" />
-      <Avatar mode="initials" initials="AZ" name="Arian Zargaran" size="md" />
-      <Avatar mode="initials" initials="AZ" name="Arian Zargaran" size="lg" />
-      <Avatar mode="initials" initials="AZ" name="Arian Zargaran" shape="square" />
-    </div>,
-  );
-  await expectAxeClean(page);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

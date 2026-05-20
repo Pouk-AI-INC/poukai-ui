@@ -1,17 +1,5 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { FeatureCard } from "./FeatureCard";
-
-/* ------------------------------------------------------------------ */
-/* Helpers                                                              */
-/* ------------------------------------------------------------------ */
-
-async function expectAxeClean(page: import("@playwright/test").Page) {
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-}
 
 /* ------------------------------------------------------------------ */
 /* Root element                                                         */
@@ -235,48 +223,4 @@ test("forwards className and arbitrary props to root", async ({ mount }) => {
   expect(cls).toContain("consumer-class");
 });
 
-/* ------------------------------------------------------------------ */
-/* Accessibility (axe)                                                  */
-/* ------------------------------------------------------------------ */
-
-test("a11y — default variant (icon + eyebrow + title + body + footer)", async ({ mount, page }) => {
-  await mount(
-    <FeatureCard
-      icon={
-        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor" />
-        </svg>
-      }
-      eyebrow="Platform"
-      title="Observability"
-      body="Every inference logged, traced, and alertable."
-      footer={<a href="/docs">Learn more →</a>}
-    />,
-  );
-  await expectAxeClean(page);
-});
-
-test("a11y — bordered variant", async ({ mount, page }) => {
-  await mount(
-    <FeatureCard
-      variant="bordered"
-      title="Secure by default"
-      body="Every pipeline is air-gapped and audited."
-    />,
-  );
-  await expectAxeClean(page);
-});
-
-test("a11y — as='li' inside ul", async ({ mount, page }) => {
-  await mount(
-    <ul style={{ listStyle: "none", padding: 0 }}>
-      <FeatureCard as="li" title="List feature" body="Feature description." />
-    </ul>,
-  );
-  await expectAxeClean(page);
-});
-
-test("a11y — as='section' with aria-labelledby", async ({ mount, page }) => {
-  await mount(<FeatureCard as="section" title="Section Feature" body="Section body copy." />);
-  await expectAxeClean(page);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

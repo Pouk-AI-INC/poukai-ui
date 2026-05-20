@@ -90,6 +90,7 @@ other layers, even if the bundler's tree-shaker would miss it.
 | molecule | `Input`       | Single-line text input; type, invalid, disabled; token-styled, forwardRef                  |
 | molecule | `Textarea`    | Multi-line textarea; invalid, disabled, rows=4 default; resize vertical                    |
 | molecule | `Field`       | Label + control + helper/error wrapper; auto-wires id, aria-describedby, aria-invalid      |
+| molecule | `Banner`      | Persistent inline notice: info / warning / danger / success; icon + body + action slots    |
 | organism | `SiteShell`   | Top nav + main slot + hairline footer; no router awareness                                 |
 | organism | `Footer`      | Copyright + email + optional secondary link row; `as` prop avoids double `<footer>`        |
 | organism | `Dialog`      | Compound modal overlay: Root, Trigger, Portal, Overlay, Content, Title, Description, Close |

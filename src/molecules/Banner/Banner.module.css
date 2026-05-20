@@ -1,0 +1,97 @@
+/* ============================================================
+   Banner — persistent inline notice molecule
+   ============================================================ */
+
+/* ---------- Root ---------- */
+
+.root {
+  /* Reset UA margin/padding. */
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+
+  /* Flex layout: icon | body | action. Wraps on narrow viewports. */
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+
+  /* Base radius. */
+  border-radius: var(--radius-2);
+
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+
+  /* Left rule — present for all tones; overridden per-tone below. */
+  border-inline-start: var(--hairline-w) solid var(--hairline);
+}
+
+/* ---------- Tone: info (default) ---------- */
+
+/* Quiet, on-page. Hairline border all around; bg matches canvas. */
+.info {
+  background: var(--bg);
+  border: var(--hairline-w) solid var(--hairline);
+  /* Override the inline-start rule set on .root so it doesn't double-up. */
+  border-inline-start: var(--hairline-w) solid var(--hairline);
+  color: var(--fg);
+}
+
+/* ---------- Tone: warning ---------- */
+
+/* Warm-accent surface. Decorative 2px left rule over the standard hairline. */
+.warning {
+  background: var(--bg-warm-accent);
+  border: none;
+  border-inline-start: 2px solid var(--fg-on-warm-muted);
+  color: var(--fg-on-warm);
+}
+
+/* ---------- Tone: danger ---------- */
+
+/* Same warm-accent register as warning — same urgency tier. */
+.danger {
+  background: var(--bg-warm-accent);
+  border: none;
+  border-inline-start: 2px solid var(--fg-on-warm-muted);
+  color: var(--fg-on-warm);
+}
+
+/* ---------- Tone: success ---------- */
+
+/* Elevated surface + accent left rule signals "positive outcome." */
+.success {
+  background: var(--bg-elevated);
+  border: var(--hairline-w) solid var(--hairline);
+  border-inline-start: 2px solid var(--accent);
+  color: var(--fg);
+}
+
+/* ---------- Icon slot ---------- */
+
+.icon {
+  /* Vertically center with first line of body text (line-height 1.55 × fs-body).
+     flex-shrink: 0 prevents the icon from compressing on narrow viewports. */
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  /* Nudge icon to align optically with the cap-height of the first text line. */
+  margin-top: 0.1em;
+}
+
+/* ---------- Body slot ---------- */
+
+.body {
+  /* Takes up all remaining space so the action stays end-aligned. */
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- Action slot ---------- */
+
+.action {
+  /* Sits after the body. flex-shrink: 0 keeps buttons from squashing. */
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+}

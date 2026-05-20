@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { FieldNote } from "./FieldNote";
 
 /* ---------- Body text ---------- */
@@ -100,41 +99,4 @@ test("renders inline link inside body text", async ({ mount }) => {
 
 /* ---------- a11y ---------- */
 
-test("a11y — plain body, no label", async ({ mount, page }) => {
-  await mount(
-    <FieldNote>
-      In 2024 we ran the same prompt across three model families and saw consistent degradation
-      after context exceeded 16k tokens.
-    </FieldNote>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — with label", async ({ mount, page }) => {
-  await mount(
-    <FieldNote label="Note">
-      These numbers reflect Q4 2023 benchmarks. The 2024 evals are in progress and results may
-      differ.
-    </FieldNote>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — with inline link in body", async ({ mount, page }) => {
-  await mount(
-    <FieldNote label="Note">
-      The latency figures come from our <a href="/methodology">public methodology doc</a>, updated
-      monthly.
-    </FieldNote>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

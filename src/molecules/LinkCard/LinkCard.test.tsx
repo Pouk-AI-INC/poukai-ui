@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Eyebrow } from "../../atoms/Eyebrow";
 import { LinkCard } from "./LinkCard";
 
@@ -196,53 +195,4 @@ test("quiet variant applies quiet class", async ({ mount }) => {
   expect(className).toMatch(/variantQuiet/);
 });
 
-/* ---------- a11y ---------- */
-
-test("a11y — default card with full slots", async ({ mount, page }) => {
-  await mount(
-    <LinkCard
-      href="/work/case"
-      eyebrow="Design"
-      title="Redesigning the onboarding flow"
-      body="A three-month engagement that cut time-to-value by 40%."
-      footer="Read more →"
-    />,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — quiet variant", async ({ mount, page }) => {
-  await mount(
-    <LinkCard href="/posts/1" variant="quiet" title="Post title" body="Post body copy." />,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — external card", async ({ mount, page }) => {
-  await mount(
-    <LinkCard
-      href="https://example.com"
-      external
-      title="External resource"
-      body="Opens in a new tab."
-    />,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — title-only minimal card", async ({ mount, page }) => {
-  await mount(<LinkCard href="/work" title="Minimal card" />);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

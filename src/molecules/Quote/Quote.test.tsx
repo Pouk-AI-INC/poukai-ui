@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Quote } from "./Quote";
 
 /* ---------- Quote body ---------- */
@@ -159,82 +158,4 @@ test("renders inline <em> inside quote body", async ({ mount }) => {
   await expect(em).toHaveText("weeks");
 });
 
-/* ---------- a11y ---------- */
-
-test("a11y — full Quote (quote, name, role, avatar img)", async ({ mount, page }) => {
-  await mount(
-    <Quote
-      quote="We went from weeks to hours. The tooling handled what we used to staff an entire team for."
-      name="Sarah Chen"
-      role="VP Engineering, Meridian Labs"
-      avatar={
-        <img
-          src="https://picsum.photos/seed/sarah-a11y/40/40"
-          alt=""
-          width={40}
-          height={40}
-          style={{ borderRadius: "50%", display: "block" }}
-        />
-      }
-    />,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — Quote without avatar", async ({ mount, page }) => {
-  await mount(
-    <Quote
-      quote="The accuracy improvements were immediate and measurable. We rolled it out to the full team within a week."
-      name="James Okonkwo"
-      role="Head of Data, Fieldwork AI"
-    />,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — Quote name only (no role, no avatar)", async ({ mount, page }) => {
-  await mount(
-    <Quote quote="The feedback loop closed in days, not quarters." name="Tomás Rivera" />,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — Quote with initials avatar (div, no img)", async ({ mount, page }) => {
-  await mount(
-    <Quote
-      quote="Exactly what we needed. Nothing we didn't."
-      name="Priya Mehta"
-      role="Engineering Lead"
-      avatar={
-        <div
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: "50%",
-            background: "#f5f5f7",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "0.875rem",
-            color: "#6e6e73",
-          }}
-        >
-          PM
-        </div>
-      }
-    />,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

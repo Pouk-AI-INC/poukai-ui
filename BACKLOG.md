@@ -200,11 +200,18 @@ build/exports, docs/coverage. CRITICALs already promoted to 🔴 Blocking.
 - [ ] **Decide Wordmark story namespace.** `"Brand / Wordmark"` vs
       `"Components / *"` for the other ten. Either document the split or
       unify under `Components/`.
-- [ ] **Spread axe-core coverage.** Inline `AxeBuilder` exists in
-      Hero/Portrait/Statement tests only; either standardize on the central
-      `src/a11y.test.tsx` or add inline scans everywhere — current pattern is
-      asymmetric.
-- [ ] **Add `Portrait` to the centralized `src/a11y.test.tsx` gate.**
+- [x] **Spread axe-core coverage.** Standardized on the central
+      `src/a11y.test.tsx` gate. Inline `AxeBuilder` scans removed from 14
+      component tests (Avatar, EmailLink, Eyebrow, Tag, Statement, FeatureCard,
+      Field, FieldNote, LinkCard, Pull, Quote, Section, TeamCard, Dialog, Footer,
+      Tabs); state-specific inline scans kept for 4 components (Hero — 3 unique
+      variant states; Portrait — eager/high-priority load variant; Input and
+      Textarea — standalone-with-label states not reachable via central gate).
+      Portrait and 4 previously-missing variant tests added to the central gate.
+- [x] **Add `Portrait` to the centralized `src/a11y.test.tsx` gate.**
+      Added `test("a11y — Portrait (lazy default, eager above-fold)", …)` covering
+      both loading modes. Portrait was already imported at the top of the file.
+      (Also done as part of the axe-coverage standardization above.)
 - [x] **Reconcile letter-spacing.** Resolved by adding `--tracking-micro: 0.04em`,
       `--tracking-eyebrow: 0.06em` (already existed), and `--tracking-numeric: 0.08em`
       tokens. Literals swept from `Stat.source`, `Hero.eyebrow`, `RoleCard.eyebrow`,
@@ -215,13 +222,21 @@ build/exports, docs/coverage. CRITICALs already promoted to 🔴 Blocking.
       (paired `max-width: 719px` → `767px`). All `@media (min-width: 768px)`
       queries in Hero and Principle converted to `@media (--bp-md)`. h1 rule
       in tokens.css likewise converted.
-- [ ] **Tokenize / document Button paddings.** `Button.module.css:34,40,46,52`
-      hardcodes four px-pair values. Brand decision says padding stays in the
-      spec, not in tokens — link the spec from the file or move to tokens.
-- [ ] **Tokenize StatusBadge dot dimensions (`8px`) and RoleCard icon box
-      (`44px`)** or reference the existing `--btn-h-md` token where it lines up.
-- [ ] **Document `illustration` slot in `meta/llms-full.txt` Hero section.**
-      Added `0.15.0`, missing from the constraints list.
+- [x] **Tokenize / document Button paddings.** Added a comment block at the
+      top of `Button.module.css` linking to `meta/design/Button.md §3` and
+      explaining that the four px-pair padding values (`6px 12px`, `9px 16px`,
+      `10px 18px`, `14px 24px`) are intentionally inline — they encode
+      size-specific affordance geometry, not a reusable token scale.
+- [x] **Tokenize StatusBadge dot dimensions (`8px`) and RoleCard icon box
+      (`44px`).** StatusBadge dot stays inline (`8px`) with a comment linking
+      `meta/design/StatusBadge.md §3` — too specific for a token. RoleCard icon
+      box swapped to `var(--btn-h-md)` (resolves to `44px`) since the alignment
+      is intentional and should track the button height ladder.
+- [x] **Document `illustration` slot in `meta/llms-full.txt` Hero section.**
+      Added `0.15.0`, missing from the constraints list. Bullet was present but
+      documented `720px`; corrected to `768px` (`--bp-md`) to match the reconciled
+      breakpoint, added stacked-below-768px behavior note, and documented accepted
+      content types (SVG, `<img>`, `<Portrait>`, etc.).
 - [x] **Prune stale `ROADMAP.md` "Shipped" block.** Done in this same pass —
       see ROADMAP.md.
 - [x] **Prune stale `BACKLOG.md` "Done" entries** Done in this same pass.
@@ -234,8 +249,12 @@ build/exports, docs/coverage. CRITICALs already promoted to 🔴 Blocking.
       integer indices with optional formatted labels (e.g. "FM-01") for enumerated
       failure cases. Documented the distinction in both `### Principle` and
       `### FailureMode` sections of `meta/llms-full.txt`.
-- [ ] **Make the Portrait dev-mode-guard test non-vacuous.** Current test
-      passes trivially under `NODE_ENV=test` without exercising the guard.
+- [x] **Make the Portrait dev-mode-guard test non-vacuous.** Added
+      `define: { "import.meta.env.DEV": "true" }` to `ctViteConfig` in
+      `playwright-ct.config.ts` so the guard executes during CT runs. Rewrote
+      the test to mount with `alt=""` and assert `mount()` rejects — the test
+      will fail if the guard is removed. No runtime behavior change (Vite
+      replaces `import.meta.env.DEV` with `false` in the published build).
 
 ### Low — hygiene + future-proofing
 
@@ -265,8 +284,11 @@ build/exports, docs/coverage. CRITICALs already promoted to 🔴 Blocking.
 - [x] **Author missing design specs under `meta/design/`** — Authored 7 missing specs
       (Wordmark, StatusBadge, Stat, RoleCard, Principle, FailureMode, SiteShell) from
       existing source. Backfill — not a re-design.
-- [ ] **Decide on Firefox CT coverage.** `playwright-ct.config.ts` runs only
-      Chromium + WebKit; add Firefox or document the omission.
+- [x] **Decide on Firefox CT coverage.** Added Firefox (Desktop Firefox device)
+      as a third project in `playwright-ct.config.ts`. All 1572 tests pass
+      across Chromium, Firefox, and WebKit — zero failures, zero flake on two
+      consecutive runs. `playwright:install` script updated to include firefox.
+      Path chosen: Firefox shipped.
 - [x] **Tokenize line-height + letter-spacing scales** — resolved by the two
       items above. Tokens added: `--tracking-micro`, `--tracking-numeric`,
       `--lh-body`, `--lh-body-relaxed`. (`--tracking-eyebrow` pre-existed.)

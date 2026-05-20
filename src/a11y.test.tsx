@@ -29,6 +29,7 @@ import { Tabs, TabsBasic } from "./organisms/Tabs";
 import { Input } from "./molecules/Input";
 import { Textarea } from "./molecules/Textarea";
 import { Field } from "./molecules/Field";
+import { Banner } from "./molecules/Banner";
 
 /**
  * a11y gate — every component is mounted in isolation and scanned with axe.
@@ -362,6 +363,11 @@ test("a11y — LinkCard (external with sr-only span)", async ({ mount, page }) =
   await expectAxeClean(page);
 });
 
+test("a11y — LinkCard (title-only, minimal)", async ({ mount, page }) => {
+  await mount(<LinkCard href="/work" title="Minimal card" />);
+  await expectAxeClean(page);
+});
+
 test("a11y — TeamCard (default stacked, all slots)", async ({ mount, page }) => {
   await mount(
     <TeamCard
@@ -420,6 +426,18 @@ test("a11y — TeamCard (as='div', minimal)", async ({ mount, page }) => {
   await expectAxeClean(page);
 });
 
+test("a11y — Portrait (3:4 aspect, standard load)", async ({ mount, page }) => {
+  await mount(
+    <Portrait
+      src="https://picsum.photos/seed/a11y-portrait/1800/2400"
+      alt="Test person — headshot for a11y scan"
+      aspect="3:4"
+      width={1800}
+    />,
+  );
+  await expectAxeClean(page);
+});
+
 test("a11y — FeatureCard (default variant, full slots)", async ({ mount, page }) => {
   await mount(
     <FeatureCard
@@ -454,6 +472,45 @@ test("a11y — FeatureCard (as='li' inside ul)", async ({ mount, page }) => {
       <FeatureCard as="li" title="List feature" body="Feature description copy." />
     </ul>,
   );
+  await expectAxeClean(page);
+});
+
+test("a11y — Banner (all four tones)", async ({ mount, page }) => {
+  await mount(
+    <div>
+      <Banner tone="info">Session will expire in 15 minutes.</Banner>
+      <Banner tone="warning">API key expires in 3 days.</Banner>
+      <Banner tone="danger">Deployment failed. Check the logs.</Banner>
+      <Banner tone="success">Deployment complete. Changes are live.</Banner>
+    </div>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — Portrait (lazy default, eager above-fold)", async ({ mount, page }) => {
+  await mount(
+    <div>
+      <Portrait
+        src="https://picsum.photos/seed/a11y-portrait/1800/2400"
+        alt="Arian Zargaran, founder of Poukai — headshot in natural light"
+        aspect="3:4"
+        width={1800}
+      />
+      <Portrait
+        src="https://picsum.photos/seed/a11y-portrait-eager/800/800"
+        alt="Team member headshot for a11y gate scan"
+        aspect="1:1"
+        width={800}
+        loading="eager"
+        fetchPriority="high"
+      />
+    </div>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — FeatureCard (as='section')", async ({ mount, page }) => {
+  await mount(<FeatureCard as="section" title="Section feature" body="Section body copy." />);
   await expectAxeClean(page);
 });
 
@@ -621,6 +678,15 @@ test("a11y — Field with error state", async ({ mount, page }) => {
       error="Please enter a valid email address."
     >
       <Input type="email" defaultValue="not-an-email" />
+    </Field>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — Field required + Input", async ({ mount, page }) => {
+  await mount(
+    <Field label="Full name" id="a11y-gate-field-required" required>
+      <Input placeholder="Arian Zargaran" />
     </Field>,
   );
   await expectAxeClean(page);
