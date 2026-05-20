@@ -252,9 +252,8 @@ build/exports, docs/coverage. CRITICALs already promoted to 🔴 Blocking.
       LinkCard, FeatureCard, TeamCard, Dialog) and `--lh-body-relaxed: 1.6`
       (intentional relaxed variant for editorial prose — Principle, FailureMode).
       All inline `1.55` / `1.6` literals replaced with the appropriate token.
-- [ ] **Fill `meta/brand.md` Typography / Spacing / Motion / Brand-mark
-      sections** (currently `_To be filled._` stubs) — the token contract is
-      enforced in code but the rationale is undocumented.
+- [x] **Fill `meta/brand.md` Typography / Spacing / Motion / Brand-mark
+      sections** — Filled the four sections (Typography / Spacing / Motion / Brand-mark).
 - [x] **Author missing design specs under `meta/design/`** — Authored 7 missing specs
       (Wordmark, StatusBadge, Stat, RoleCard, Principle, FailureMode, SiteShell) from
       existing source. Backfill — not a re-design.

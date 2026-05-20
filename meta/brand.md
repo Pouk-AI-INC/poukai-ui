@@ -33,19 +33,209 @@ Pouk AI's color foundation is Apple's restrained Human Interface palette: SF sys
 
 ### Typography — headline and body face, rationale, type scale, line-height.
 
-_To be filled. For each face: rationale (why this face, why now), scale (token → use), line-height, tracking notes._
+Two families. No exceptions.
+
+**Geist** (sans, variable, self-hosted) is the primary UI face: body copy, navigation, buttons, captions, badges, eyebrows, labels. It was chosen because it is purpose-built for screen readability, ships as a variable font (the entire weight range in one file), and its metrics align tightly with the system fallbacks (`-apple-system`, `BlinkMacSystemFont`, `SF Pro Text`) — so the layout does not shift on first render on Apple devices. Geist Regular (weight 400) is the default; weight varies per context but never exceeds 600 in UI chrome. Geist Italic is self-hosted but is not used for editorial moments — that is Instrument Serif's territory.
+
+**Instrument Serif** (display serif, self-hosted, Regular + Italic) is the editorial accent. It appears at h1, h2, card titles, Stat numerals, the `<Statement>` molecule, and the `<Pull>` molecule. It was chosen for the same reason Geist was chosen for sans: it is contemporary without being trendy, it has the optical mass a display serif needs at headline sizes, and its Italic cut has a genuine calligraphic tilt that reads as considered rather than mechanical. The Italic cut is the primary expressive register of the brand; the Roman cut anchors headings. Instrument Serif is never used for UI chrome — buttons, labels, navigation, badges, eyebrows are always Geist.
+
+**Geist Mono** (monospace variable, self-hosted) is the reference face. It encodes "label" or "citation" semantics. Used for Stat source lines and RoleCard eyebrow labels. Not used for general code blocks.
+
+#### Type scale
+
+The scale is fluid throughout. Every rung is a named `clamp()` token so the step is legible in code and in `llms-full.txt`. Inline values are never permitted.
+
+**Body register**
+
+| Token        | Range        | Role                                                                                                  |
+| ------------ | ------------ | ----------------------------------------------------------------------------------------------------- |
+| `--fs-micro` | 12px (fixed) | Uppercase labels only. Always paired with `text-transform: uppercase` and `--tracking-micro: 0.04em`. |
+| `--fs-meta`  | 14px (fixed) | Secondary text: captions, nav labels, badge text, attributions. Mixed case. No forced tracking.       |
+| `--fs-body`  | 17–19px      | Primary reading size. Global `body` default.                                                          |
+
+**Heading scale**
+
+| Token                   | Range   | Role                                                                                              |
+| ----------------------- | ------- | ------------------------------------------------------------------------------------------------- |
+| `--fs-card-title`       | 24–32px | Card titles shared by `<RoleCard>`, `<Principle>`, `<FailureMode>`. Instrument Serif, weight 400. |
+| `--fs-tagline-intimate` | 32–52px | Hero title at `size="intimate"`. Use only inside the Hero molecule.                               |
+| `--fs-tagline`          | 36–68px | The h1 display scale. Used exactly once per page.                                                 |
+
+**Display rungs**
+
+| Token          | Range   | Role                                                                                                                                          |
+| -------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--fs-display` | 48–88px | Editorial display. At most once per page. Not a heading replacement. Sits 8px below `--fs-stat-large` so numerals remain the loudest element. |
+
+**Editorial accents** — Instrument Serif italic only
+
+| Token            | Range   | Role                                                                   |
+| ---------------- | ------- | ---------------------------------------------------------------------- |
+| `--fs-pull`      | 20–26px | Inline pull-quote. Above body, below Statement. Used only by `<Pull>`. |
+| `--fs-statement` | 28–44px | Full-width italic-serif editorial block. Used only by `<Statement>`.   |
+
+**Numerical display** — Instrument Serif, optical-tabular, editorial
+
+| Token             | Range   | Role                                                      |
+| ----------------- | ------- | --------------------------------------------------------- |
+| `--fs-stat`       | 44–72px | `<Stat>` numeral at `size="md"`.                          |
+| `--fs-stat-large` | 56–96px | `<Stat>` numeral at `size="lg"`. One per section at most. |
+
+**Utility rungs** (used by specific atoms or the wordmark; not for general layout)
+
+| Token           | Range   | Role                                                                                                                                        |
+| --------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--fs-wordmark` | 17–20px | Reserved for the Wordmark atom. The Wordmark currently uses a `height` prop rather than this token; the token documents the intended scale. |
+
+#### Letter-spacing scale
+
+Tracking tokens are role-scoped, not size-scoped. Each token names a semantic register.
+
+| Token                | Value      | Register                                                                                                                                                                                                                                                      |
+| -------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--tracking-micro`   | `0.04em`   | Micro/uppercase labels — `.micro` global class, Stat source, Hero eyebrow (no-title variant). Always paired with `text-transform: uppercase`.                                                                                                                 |
+| `--tracking-eyebrow` | `0.06em`   | All Eyebrow labels (`<Eyebrow>`, RoleCard eyebrow, FieldNote label). The canonical value for uppercase card labels at `--fs-meta`. Chosen over `0.04em` (too tight at uppercase 14px) and `0.08em` (no distinct semantic register to justify the wider step). |
+| `--tracking-numeric` | `0.08em`   | Sequential reference markers (`FailureMode` index). Wider than eyebrow tracking to visually separate reference labels from editorial labels.                                                                                                                  |
+| `--tracking-stat`    | `-0.015em` | Negative tracking for `<Stat>` display numerals. Compensates for the optical loosening of large-scale serif glyphs.                                                                                                                                           |
+
+Serif italic titles (h1, h2, card titles) carry `letter-spacing: -0.005em` directly in the token-file element rules, not via a named tracking token. This value compensates for the visual loosening that italic serif cuts produce at display sizes — the eye reads an untracked italic serif at 36px+ as marginally wide. The `-0.005em` hairline correction is invisible at normal sizes and registers only at display scale, which is the correct behavior.
+
+#### Line-height scale
+
+| Token               | Value  | Role                                                                                                                                                                                          |
+| ------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--lh-meta`         | `1.2`  | Meta/eyebrow-scale text. Matches the value used on `h2`, `h3`, and `.numeral` throughout the token file.                                                                                      |
+| `--lh-body`         | `1.55` | Canonical body line-height. Global `body`, RoleCard, Statement, Dialog body copy, most card molecules. The default reading rhythm.                                                            |
+| `--lh-body-relaxed` | `1.6`  | Relaxed body for longer-form editorial prose. Applied to `<Principle>` and `<FailureMode>` — intentionally looser to give extended paragraphs more air. Not for UI chrome or short card copy. |
+
+The delta between `--lh-body` and `--lh-body-relaxed` is 0.05. That is a deliberate minimum: below 0.05 the distinction collapses perceptually; above it, two named tokens are warranted. Both values are in use on shipped components and neither is replaceable by the other.
 
 ### Spacing — scale and rhythm rules.
 
-_To be filled. The scale itself + the rules for picking values (when to escalate from `--space-4` to `--space-8`, etc.)._
+The spacing scale is geometric and based on a 4px grid. Every gap, padding, and margin in the system derives from this scale. No component CSS module may hardcode a raw pixel value for spacing — the token is the contract.
+
+#### Scale
+
+| Token        | rem     | px    | Canonical role                                                                                                    |
+| ------------ | ------- | ----- | ----------------------------------------------------------------------------------------------------------------- |
+| `--space-1`  | 0.25rem | 4px   | Minimum: icon-to-label gap, dot-to-text gap                                                                       |
+| `--space-2`  | 0.5rem  | 8px   | Inline gap: eyebrow-to-title, tight label stacks                                                                  |
+| `--space-3`  | 0.75rem | 12px  | Badge dot-to-text, Stat column gap                                                                                |
+| `--space-4`  | 1rem    | 16px  | Body paragraph margin, card internal rhythm, default component breathing room                                     |
+| `--space-6`  | 1.5rem  | 24px  | Hero status-to-title, nav gap, card padding tier                                                                  |
+| `--space-8`  | 2rem    | 32px  | Hero title-to-lede, Principle padding, `<hr>` margin                                                              |
+| `--space-10` | 2.5rem  | 40px  | Editorial bump above `--space-8` — h1 desktop bottom margin, Hero CTA desktop top margin, FailureMode top padding |
+| `--space-12` | 3rem    | 48px  | Principle desktop padding, main content top                                                                       |
+| `--space-16` | 4rem    | 64px  | Large section gaps                                                                                                |
+| `--space-24` | 6rem    | 96px  | Main content bottom padding                                                                                       |
+| `--space-32` | 8rem    | 128px | Maximum editorial breathing room                                                                                  |
+
+Steps 5, 7, 9, 11 do not exist. The scale is intentionally sparse — the gaps force components toward the established rhythm rather than splitting the difference.
+
+#### Rules for picking values
+
+The scale reads as three tiers of intent:
+
+- **Tight (1–3):** within an atomic element — between an icon and its label, between a dot and the badge text beside it. At this scale every pixel matters optically.
+- **Component (4–8):** internal component structure — between a title and a lede, between sections within a card, between a paragraph and the one that follows. `--space-4` is the default unit; `--space-6` and `--space-8` signal intentional editorial breathing room.
+- **Layout (10–32):** section-level separation — between a Hero and the content below it, between major editorial bands. These values are loud on purpose; they should feel like a deliberate pause.
+
+When a spacing decision sits between two rungs, move to the larger rung. Splitting the difference with an inline value is a brand violation. If the larger rung feels too spacious, the right answer is to examine the component structure, not to introduce a magic number.
+
+#### Layout tokens
+
+These tokens govern page geometry, not component rhythm. They are read by SiteShell and Hero; they are not for general component use.
+
+| Token                     | Value                             | Role                                                                                                                                                                                                                                                                      |
+| ------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--page-pad`              | `clamp(1.5rem, 2vw + 1rem, 3rem)` | Horizontal padding for SiteShell header and footer. The only token that governs the outer page edge.                                                                                                                                                                      |
+| `--content-max`           | `64rem` (1024px)                  | Maximum width of the main content column.                                                                                                                                                                                                                                 |
+| `--hero-max`              | `38rem` (608px)                   | Maximum width of the Hero text column at all widths.                                                                                                                                                                                                                      |
+| `--hero-illustration-max` | `25rem` (400px)                   | Maximum width of the Hero illustration column above the medium breakpoint.                                                                                                                                                                                                |
+| `--content-max-bleed`     | `100vw`                           | Full-bleed layout permission. Opt-in: components reference this token explicitly to escape the `--content-max` column. Canonical usage: `width: var(--content-max-bleed); margin-inline: calc(50% - 50vw)`. Not a default; nothing picks this up without explicit intent. |
+
+`--content-max-bleed` is `100vw` (not `calc(100vw - scrollbar-width)` and not `100dvw`). macOS uses overlay scrollbars so `100vw` equals the viewport content width on the primary platform. On platforms with space-occupying scrollbars, the cosmetic overhang is addressable at the site layout level — it is not a DS constraint. `100dvw` is equivalent for width; `vw` is the correct unit here. This value is non-negotiable without Arian's approval.
 
 ### Motion — default easing, default duration, principles.
 
-_To be filled. Default easings + durations + principles (e.g. "no animation without semantic meaning", reduced-motion fallback)._
+Motion is restrained and editorial. Every transition serves a perceptual purpose — it either confirms an action, reveals content, or signals state. No animation exists for decoration.
+
+#### Easing tokens
+
+| Token           | Value                           | Role                                                                                                                                                                                                                                     |
+| --------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--easing`      | `cubic-bezier(0.16, 1, 0.3, 1)` | Expo-out. The entrance easing for all reveal animations (Hero stagger, content entrance). Objects decelerate rapidly into their resting position — they do not bounce, spring, or overshoot. The curve reads as confident and immediate. |
+| `--easing-link` | `cubic-bezier(0.2, 0, 0, 1)`    | Link underline grow. A gentler exit on the deceleration tail — appropriate for a sub-pixel graphic element that must feel responsive without overshooting into a mechanical stop.                                                        |
+
+No bouncy or elastic curves exist in this system. Bounce and spring easings belong to the playful register; pouk.ai is operator-grade.
+
+#### Duration tokens
+
+| Token                   | Value    | Role                                                                                                                                                                                                                                              |
+| ----------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--dur-press`           | `80ms`   | Tactile click/press feedback — button `:active` transform, immediate-response interactions. Deliberately shorter than `--dur-fast` so the press response lands without perceptible lag. This is the floor of the motion scale; nothing is faster. |
+| `--dur-fast`            | `180ms`  | Micro-interactions: color transitions, opacity shifts, border changes. The default for any state change that does not involve geometry.                                                                                                           |
+| `--dur-mid`             | `240ms`  | Standard transition. Used for the link underline grow — a graphic element that involves geometry but is sub-pixel and must feel immediate.                                                                                                        |
+| `--dur-slow`            | `600ms`  | Entrance animations. The Hero stagger uses this as the base duration for each slot; the title slot gets 100ms additional (`--dur-hero-title-rise: 700ms`) for visual emphasis.                                                                    |
+| `--dur-hero-title-rise` | `700ms`  | Title slot duration in the Hero entrance stagger. 100ms longer than its siblings to give the primary statement a slightly longer settle — the eye reads the title last, so it earns the additional time.                                          |
+| `--dur-stagger-step`    | `150ms`  | Base delay step for staggered entrance sequences. Multiply by slot index (0–3) to derive each slot's `animation-delay`.                                                                                                                           |
+| `--dur-pulse`           | `1800ms` | `<StatusBadge status="available">` halo pulse. Intentionally slow and meditative — the pulse is not an alert, it is a presence signal. At 1800ms per cycle it reads as breathing, not blinking.                                                   |
+
+All durations are ≤300ms for state transitions and ≤700ms for entrance animations. The `--dur-pulse` exception exists because the pulse is the indicator itself, not decoration on top of content.
+
+#### Principles
+
+**Motion earns its place.** A transition without a semantic purpose is noise. Before adding any animation, name what the user perceives: "content arriving," "action confirmed," "state changed." If the answer is "it looks nice," remove the animation.
+
+**No animation above 300ms for state transitions.** State changes (hover, focus, active, disabled) must resolve within `--dur-fast` (180ms) or `--dur-mid` (240ms). Longer durations create the perception of lag, which breaks the operator-grade register.
+
+**Entrances are one-shot.** Entrance animations (Hero stagger, content reveal) fire once on mount. They do not repeat, they do not loop, and they do not trigger on scroll re-entry. The brand aesthetic is confident arrival, not perpetual motion.
+
+**`prefers-reduced-motion` is non-negotiable.** The token file carries a single `@media (prefers-reduced-motion: reduce)` block that collapses all `animation-duration` and `transition-duration` values to `0.01ms` via `!important`. This is the only permitted use of `!important` in the codebase. The `--dur-pulse` StatusBadge animation is collapsed by this block — despite being status-bearing information, the available status is also communicated via text content, so the visual pulse is non-essential and can be safely suppressed. Components must not force-animate via JavaScript or inline styles to work around this rule.
 
 ### Brand marks — Wordmark, isotype, lockup rules.
 
-_To be filled. Wordmark vs. isotype vs. stacked lockup — when each is used, sizing rules, clear-space rules, on-light vs. on-dark variants._
+#### Mark inventory
+
+Three distinct marks are in use. Each has a defined scope; they are not interchangeable.
+
+**Horizontal lockup (canonical).** The isotype (eagle abstraction) placed left of the wordtype ("poukai"), side by side. This is the primary brand expression. It appears in SiteShell navigation, documentation headers, and any surface with horizontal space for both elements. The lockup is the default; the other marks are opt-in for specific format constraints.
+
+**Stacked lockup.** Isotype above wordtype, centered. Used only for square-format surfaces — app icons, social avatar frames, OG images where the horizontal aspect ratio is unavailable. Shipped as `src/brand/lockup-stacked.svg` and as a PNG at `src/brand/lockup-stacked.png`. Do not use as the page-level mark.
+
+**Isotype only.** The eagle abstraction without wordtype. Used for avatar contexts (`src/brand/avatar-isotype.png`) and any surface too small to render the full wordtype legibly. The isotype has no minimum-size token; below approximately 32px the internal geometry degrades — callers are responsible for size-appropriate usage.
+
+Runtime brand assets for non-React consumers are in `src/brand/` and exported via the `./brand/*` package subpath: `stacked-lockup.svg`, `isotype.png`, `banner.png`, `avatar-isotype.png`, `avatar-lockup.png`.
+
+#### Wordmark component
+
+The primary mark for React consumers is the `<Wordmark>` atom at `src/atoms/Wordmark/Wordmark.tsx`. It is an inline SVG — not an `<img>` referencing an external file. The path geometry lives in `src/atoms/Wordmark/wordmark-geometry.ts`, generated from `src/atoms/Wordmark/poukai-logo.svg` by `scripts/build-wordmark.mjs`. Path changes require running that build script, not hand-editing the geometry file.
+
+**ViewBox.** `0 0 1184 290`. Aspect ratio approximately 4.08:1. This is fixed — the aspect ratio is part of the mark geometry and does not change.
+
+**Sizing.** The `height` prop controls render size in pixels. Width is automatic via the viewBox aspect ratio. Never set width independently. The SiteShell default is `height={56}`. The minimum is `height={40}` — below this the isotype detail collapses into illegibility. Do not render below 40px.
+
+**Color.** The mark uses `fill="currentColor"` on the root `<svg>`. There is no `color` prop on the Wordmark itself. Colored variants come from the parent CSS context — set `color` on a wrapping element. The mark inverts cleanly by setting `color: white` (or the equivalent token) on the parent. Do not override via `style=` or component-level CSS; set color on a parent.
+
+**`currentColor` decision.** The single-token color model was chosen over a multi-prop API (`foregroundColor`, `accentColor`, etc.) because the eagle mark has one optical weight throughout — there are no distinct isotype vs. wordtype color zones that would need separate control in normal use. A single `currentColor` inheritance keeps the API surface minimal and makes inversion (light → dark, warm band) a one-property parent change rather than a prop negotiation.
+
+**Accessibility.** The Wordmark carries an accessible label (the `label` prop, defaulting to "pouk.ai") rendered as a `<title>` inside the SVG. Do not set `label=""` — the label is the a11y name of the primary brand mark.
+
+#### Geometry rules
+
+Wordmark geometry is encoded in a single `<path>` set. The gap between the isotype and the wordtype is 120 SVG units. The wordtype renders at 1.8× the isotype's base scale; the isotype renders at 1.25× its source scale. These proportions were tuned in v0.3.0 (horizontal lockup restoration) and v0.3.1 (flush-left isotype shift) and are not open for ad-hoc adjustment. Any change to these proportions is a brand-level decision requiring Arian's approval and a new entry in this log (ADR-0011).
+
+#### Lockup rules
+
+- The horizontal lockup is canonical. Use it wherever the format permits.
+- The stacked lockup is for square-format surfaces only. Do not use it as the default navigation mark.
+- Do not add a second Wordmark inside SiteShell's children — SiteShell already renders one in its header.
+- Do not use the Wordmark as a watermark, a background texture, or at reduced opacity. The mark always renders at full opacity.
+- Clear space: maintain a minimum clear zone of one isotype-height on all sides of the lockup. No other graphic elements may intrude into this zone.
+
+#### Cultural note
+
+The eagle mark is a geometric abstraction inspired by Pouākai, the mythic Haast's eagle of Māori legend. The design is deliberately non-figurative — it carries the silhouette and visual weight of an apex predator without appropriating tā moko, kowhaiwhai, or any specific Māori visual motif. This boundary is permanent. Future mark evolution must stay within the geometric, abstracted register.
 
 ---
 
