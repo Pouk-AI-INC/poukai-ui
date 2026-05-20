@@ -147,10 +147,7 @@ build/exports, docs/coverage. CRITICALs already promoted to 🔴 Blocking.
 - [ ] **Add `displayName` to all `forwardRef` components.** Currently set on
       Hero/Statement/Portrait only; missing on Button, Stat, StatusBadge,
       Wordmark, FailureMode, Principle, RoleCard, SiteShell.
-- [ ] **Document polymorphic-prop conventions.** Three patterns coexist
-      undocumented: `asChild` (Button via Radix Slot), `as` (Statement root
-      swap), `titleAs` (Hero child-slot swap). Codify in `meta/brand.md` or
-      a CONTRIBUTING note.
+- [x] **Document polymorphic-prop conventions.** Documented in `meta/conventions/polymorphic-props.md`.
 - [ ] **Add `args` / `argTypes` to story default exports** for FailureMode,
       Portrait, Principle, RoleCard, Statement, SiteShell — currently only
       Button/Stat/StatusBadge/Hero expose Playground knobs.
