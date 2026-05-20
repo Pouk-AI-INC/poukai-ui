@@ -1,5 +1,11 @@
 # @poukai-inc/ui
 
+## 0.19.0
+
+### Minor Changes
+
+- 72b3ca0: Add `Tabs` organism — compound tabbed interface wrapping `@radix-ui/react-tabs` with brand styling. Ships `Tabs.Root`, `Tabs.List`, `Tabs.Trigger`, `Tabs.Content` compound subcomponents and a `TabsBasic` convenience wrapper. Horizontal and vertical orientations supported. Zero new tokens.
+
 ## 0.18.0
 
 ### Minor Changes
