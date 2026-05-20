@@ -32,3 +32,4 @@ export { Quote, type QuoteProps } from "./molecules/Quote";
 export { Input, type InputProps } from "./molecules/Input";
 export { Textarea, type TextareaProps } from "./molecules/Textarea";
 export { Field, type FieldProps } from "./molecules/Field";
+export { Banner, type BannerProps, type BannerTone } from "./molecules/Banner";

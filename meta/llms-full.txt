@@ -547,6 +547,50 @@ Padding and font-size stay hand-tuned per size (no separate padding-token scale)
 </Field>
 ```
 
+### Banner
+- Persistent inline notice molecule. Sits in document flow; not a toast, not a modal, not a status indicator.
+- Root element: `<div>`. `forwardRef<HTMLDivElement, BannerProps>`. `...rest` spread. `displayName = "Banner"`.
+- `tone` (optional `"info" | "warning" | "danger" | "success"`, default `"info"`) — controls color, ARIA role, and left rule.
+- `icon` (optional `ReactNode`) — leading icon slot. No auto-icon. Consumer passes decorative SVG with `aria-hidden="true"`.
+- `action` (optional `ReactNode`) — trailing action slot. Typically `<Button variant="ghost">`. Natural focus order after body.
+- `children` (required `ReactNode`) — body content.
+- A11y: `role="status"` (polite live region) for `info` and `success`; `role="alert"` (assertive) for `warning` and `danger`.
+- Tone color table:
+  - `info`: `--bg` background, `--fg` text, `--hairline-w` / `--hairline` border all sides.
+  - `warning`: `--bg-warm-accent` background, `--fg-on-warm` text, 2px `--fg-on-warm-muted` border-inline-start, no full border.
+  - `danger`: `--bg-warm-accent` background, `--fg-on-warm` text, 2px `--fg-on-warm-muted` border-inline-start, no full border.
+  - `success`: `--bg-elevated` background, `--fg` text, 2px `--accent` border-inline-start, `--hairline-w` / `--hairline` full border.
+- Layout: flex row, `align-items: flex-start`, `flex-wrap: wrap`. Icon and action are `flex-shrink: 0`; body is `flex: 1`.
+- Tokens consumed: `--bg`, `--bg-elevated`, `--bg-warm-accent`, `--fg`, `--fg-on-warm`, `--fg-on-warm-muted`, `--hairline`, `--hairline-w`, `--accent`, `--font-sans`, `--fs-body`, `--lh-body`, `--space-2`, `--space-3`, `--space-4`, `--radius-2`. Zero new tokens.
+- Static and persistent. No dismissal, no animation, no timing in v1. Consumer controls mount/unmount.
+- Toast (ephemeral overlay) is deferred — requires a Provider, queue, and portal.
+- Do NOT add auto-icons per tone — icon is always a consumer-controlled slot.
+- Do NOT add dismissal logic or animation in v1.
+- Do NOT introduce danger/warning/success color tokens — re-use the warm-accent tier.
+
+```tsx
+// (a) Info — quiet on-page notice:
+<Banner tone="info">Your session will expire in 15 minutes.</Banner>
+
+// (b) Warning — assertive, warm-accent surface:
+<Banner tone="warning">API key expires in 3 days. Rotate before the deadline.</Banner>
+
+// (c) Danger — assertive, same warm register as warning:
+<Banner tone="danger">Deployment failed. Check the logs and redeploy.</Banner>
+
+// (d) Success — elevated surface, accent left rule:
+<Banner tone="success">Deployment complete. Your changes are live.</Banner>
+
+// (e) With icon and action slots:
+<Banner
+  tone="warning"
+  icon={<svg aria-hidden="true">…</svg>}
+  action={<Button variant="ghost" size="sm">Rotate key</Button>}
+>
+  API key expires in 3 days.
+</Banner>
+```
+
 ### SiteShell
 - Do NOT nest SiteShell inside another SiteShell. It is min-height: 100dvh.
 - Emits plain <a href> tags — framework-router consumers intercept at app level.

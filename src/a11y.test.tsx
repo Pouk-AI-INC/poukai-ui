@@ -29,6 +29,7 @@ import { Tabs, TabsBasic } from "./organisms/Tabs";
 import { Input } from "./molecules/Input";
 import { Textarea } from "./molecules/Textarea";
 import { Field } from "./molecules/Field";
+import { Banner } from "./molecules/Banner";
 
 /**
  * a11y gate — every component is mounted in isolation and scanned with axe.
@@ -453,6 +454,18 @@ test("a11y — FeatureCard (as='li' inside ul)", async ({ mount, page }) => {
     <ul style={{ listStyle: "none", padding: 0 }}>
       <FeatureCard as="li" title="List feature" body="Feature description copy." />
     </ul>,
+  );
+  await expectAxeClean(page);
+});
+
+test("a11y — Banner (all four tones)", async ({ mount, page }) => {
+  await mount(
+    <div>
+      <Banner tone="info">Session will expire in 15 minutes.</Banner>
+      <Banner tone="warning">API key expires in 3 days.</Banner>
+      <Banner tone="danger">Deployment failed. Check the logs.</Banner>
+      <Banner tone="success">Deployment complete. Changes are live.</Banner>
+    </div>,
   );
   await expectAxeClean(page);
 });
