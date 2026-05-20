@@ -1,0 +1,31 @@
+name: Auto-merge
+
+# Enables auto-merge on every non-draft PR as soon as it opens (or moves out
+# of draft). The PR then waits for required checks to pass — main branch
+# protection requires `ci` to be green — and squash-merges automatically.
+#
+# Auto-merge is opt-in per PR by GitHub design. This workflow opts in on
+# every PR so the repo behaves as if "auto-merge by default" was a feature.
+#
+# The CHANGESETS_TOKEN PAT is used so the enable call succeeds even on PRs
+# created by GITHUB_TOKEN (which itself can't enable auto-merge on its own
+# PRs in some edge cases) and on PRs against rulesets that scope by author.
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  enable:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enable auto-merge (squash)
+        env:
+          GH_TOKEN: ${{ secrets.CHANGESETS_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: gh pr merge "$PR_NUMBER" --auto --squash --repo "$GITHUB_REPOSITORY"
