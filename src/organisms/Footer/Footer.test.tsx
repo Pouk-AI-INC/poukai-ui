@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Footer } from "./Footer";
 
 const BASE_PROPS = {
@@ -154,51 +153,4 @@ test("ref forwarding attaches to the root element", async ({ mount, page }) => {
   await expect(el).toBeVisible();
 });
 
-/* ── Accessibility ─────────────────────────────────────────── */
-
-test("a11y — as=div (default, slotted context) passes axe-core", async ({ mount, page }) => {
-  await mount(
-    <div>
-      <Footer
-        {...BASE_PROPS}
-        links={[
-          { href: "/privacy", label: "Privacy" },
-          { href: "/terms", label: "Terms" },
-          { href: "https://github.com/poukai-inc", label: "GitHub ↗", external: true },
-        ]}
-      />
-    </div>,
-  );
-  const results = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
-});
-
-test("a11y — as=footer (standalone) passes axe-core with contentinfo landmark", async ({
-  mount,
-  page,
-}) => {
-  await mount(
-    <Footer
-      as="footer"
-      {...BASE_PROPS}
-      links={[
-        { href: "/privacy", label: "Privacy" },
-        { href: "/terms", label: "Terms" },
-      ]}
-    />,
-  );
-  const results = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
-});
-
-test("a11y — no links variant passes axe-core", async ({ mount, page }) => {
-  await mount(<Footer as="footer" {...BASE_PROPS} />);
-  const results = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

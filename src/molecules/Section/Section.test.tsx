@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Section } from "./Section";
 import { Eyebrow } from "../../atoms/Eyebrow";
 
@@ -206,60 +205,4 @@ test("renders children below header block", async ({ mount }) => {
 
 /* ---------- a11y ---------- */
 
-test("a11y — titled section (default)", async ({ mount, page }) => {
-  await mount(
-    <Section eyebrow="01 · Approach" title="The rules we ship by." lede="Supporting copy.">
-      <p>Body content.</p>
-    </Section>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — tight variant", async ({ mount, page }) => {
-  await mount(<Section size="tight" title="Tight section" lede="Supporting copy." />);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — as='article'", async ({ mount, page }) => {
-  await mount(<Section as="article" title="Article heading" lede="Article lede." />);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — no title (unlabeled section)", async ({ mount, page }) => {
-  await mount(
-    <Section lede="No title section.">
-      <p>Body content.</p>
-    </Section>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — ReactNode eyebrow with numeral", async ({ mount, page }) => {
-  await mount(
-    <Section
-      eyebrow={
-        <Eyebrow numeral="FM-03" variant="numbered">
-          Failure Mode
-        </Eyebrow>
-      }
-      title="The chatbot plateau."
-      lede="Supporting copy."
-    />,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

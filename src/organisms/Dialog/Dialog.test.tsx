@@ -1,19 +1,9 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Dialog } from "./Dialog";
 import { DialogBasic } from "./DialogBasic";
 import { Button } from "../../atoms/Button";
 
 /* ─── Helpers ────────────────────────────────────────────────── */
-
-const AXE_ISOLATED_RULES = ["landmark-one-main", "page-has-heading-one", "region"] as const;
-
-async function expectAxeClean(page: import("@playwright/test").Page) {
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules([...AXE_ISOLATED_RULES])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-}
 
 /* ─── Compound API tests ─────────────────────────────────────── */
 
@@ -388,49 +378,4 @@ test("DialogBasic className forwarded to Content", async ({ mount, page }) => {
   expect(cls).toContain("consumer-override");
 });
 
-/* ─── axe-core a11y scan ─────────────────────────────────────── */
-
-test("a11y — Dialog (open, compound API)", async ({ mount, page }) => {
-  await mount(
-    <Dialog.Root defaultOpen>
-      <Dialog.Portal>
-        <Dialog.Overlay />
-        <Dialog.Content>
-          <Dialog.Title>Accessible dialog</Dialog.Title>
-          <Dialog.Description>
-            This dialog has a title and description for screen readers.
-          </Dialog.Description>
-          <p>Body content.</p>
-          <Dialog.Close asChild>
-            <Button variant="ghost">Close</Button>
-          </Dialog.Close>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>,
-  );
-
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await expectAxeClean(page);
-});
-
-test("a11y — DialogBasic (open)", async ({ mount, page }) => {
-  await mount(
-    <DialogBasic
-      open={true}
-      onOpenChange={() => {}}
-      title="A11y test dialog"
-      description="This dialog is scanned for accessibility violations."
-      footer={
-        <>
-          <Button variant="ghost">Cancel</Button>
-          <Button variant="primary">Confirm</Button>
-        </>
-      }
-    >
-      <p>Body content for the a11y scan.</p>
-    </DialogBasic>,
-  );
-
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await expectAxeClean(page);
-});
+/* a11y scans (Dialog open, DialogBasic open) are in src/a11y.test.tsx (central gate). */

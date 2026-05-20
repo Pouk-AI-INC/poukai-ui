@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Tag } from "./Tag";
 
 /* ---------- Render ---------- */
@@ -114,52 +113,4 @@ test("forwards ref to the root span element", async ({ mount }) => {
   expect(tag).toBe("span");
 });
 
-/* ---------- a11y ---------- */
-
-test("a11y — default tone", async ({ mount, page }) => {
-  await mount(<Tag>Engineering</Tag>);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — muted tone", async ({ mount, page }) => {
-  await mount(<Tag tone="muted">Draft</Tag>);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — with icon (aria-hidden on icon)", async ({ mount, page }) => {
-  await mount(
-    <Tag
-      icon={
-        <svg width={12} height={12} aria-hidden="true" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" fill="currentColor" />
-        </svg>
-      }
-    >
-      Featured
-    </Tag>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — multiple tags in a flex row", async ({ mount, page }) => {
-  await mount(
-    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-      <Tag>Engineering</Tag>
-      <Tag>AI Infrastructure</Tag>
-      <Tag tone="muted">Draft</Tag>
-    </div>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

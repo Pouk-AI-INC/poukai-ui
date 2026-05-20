@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Eyebrow } from "./Eyebrow";
 
 /* ---------- Render ---------- */
@@ -114,45 +113,4 @@ test("forwards aria-* props to the root element", async ({ mount }) => {
   await expect(component).toHaveAttribute("aria-label", "Section marker");
 });
 
-/* ---------- a11y ---------- */
-
-test("a11y — default muted variant", async ({ mount, page }) => {
-  await mount(<Eyebrow>Role 01</Eyebrow>);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — solid variant", async ({ mount, page }) => {
-  await mount(<Eyebrow variant="solid">Engineering</Eyebrow>);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — numbered variant with numeral", async ({ mount, page }) => {
-  await mount(
-    <Eyebrow variant="numbered" numeral="FM-03">
-      Failure Mode
-    </Eyebrow>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — as heading (h2)", async ({ mount, page }) => {
-  await mount(
-    <div>
-      <Eyebrow as="h2">Section</Eyebrow>
-      <p>Body content.</p>
-    </div>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

@@ -200,13 +200,18 @@ build/exports, docs/coverage. CRITICALs already promoted to 🔴 Blocking.
 - [ ] **Decide Wordmark story namespace.** `"Brand / Wordmark"` vs
       `"Components / *"` for the other ten. Either document the split or
       unify under `Components/`.
-- [ ] **Spread axe-core coverage.** Inline `AxeBuilder` exists in
-      Hero/Portrait/Statement tests only; either standardize on the central
-      `src/a11y.test.tsx` or add inline scans everywhere — current pattern is
-      asymmetric.
+- [x] **Spread axe-core coverage.** Standardized on the central
+      `src/a11y.test.tsx` gate. Inline `AxeBuilder` scans removed from 14
+      component tests (Avatar, EmailLink, Eyebrow, Tag, Statement, FeatureCard,
+      Field, FieldNote, LinkCard, Pull, Quote, Section, TeamCard, Dialog, Footer,
+      Tabs); state-specific inline scans kept for 4 components (Hero — 3 unique
+      variant states; Portrait — eager/high-priority load variant; Input and
+      Textarea — standalone-with-label states not reachable via central gate).
+      Portrait and 4 previously-missing variant tests added to the central gate.
 - [x] **Add `Portrait` to the centralized `src/a11y.test.tsx` gate.**
       Added `test("a11y — Portrait (lazy default, eager above-fold)", …)` covering
       both loading modes. Portrait was already imported at the top of the file.
+      (Also done as part of the axe-coverage standardization above.)
 - [x] **Reconcile letter-spacing.** Resolved by adding `--tracking-micro: 0.04em`,
       `--tracking-eyebrow: 0.06em` (already existed), and `--tracking-numeric: 0.08em`
       tokens. Literals swept from `Stat.source`, `Hero.eyebrow`, `RoleCard.eyebrow`,

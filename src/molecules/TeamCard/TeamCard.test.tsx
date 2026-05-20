@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { TeamCard } from "./TeamCard";
 import { Portrait } from "../Portrait";
 import { EmailLink } from "../../atoms/EmailLink";
@@ -203,45 +202,4 @@ test("forwards data-* and aria-* props to root", async ({ mount }) => {
   await expect(component).toHaveAttribute("aria-describedby", "some-desc");
 });
 
-/* ── axe scan ─────────────────────────────────────────────────────────────── */
-
-test("axe — no violations (default stacked, all slots)", async ({ mount, page }) => {
-  await mount(
-    <TeamCard
-      portrait={PORTRAIT}
-      name="Arian Zargaran"
-      role="Founder, Engineering"
-      bio="Builds production AI systems end-to-end."
-      contact={CONTACT}
-    />,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("axe — no violations (horizontal layout)", async ({ mount, page }) => {
-  await mount(
-    <TeamCard
-      layout="horizontal"
-      portrait={PORTRAIT}
-      name="Arian Zargaran"
-      role="Founder, Engineering"
-      bio="Builds production AI systems end-to-end."
-      contact={CONTACT}
-    />,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("axe — no violations (as='div', minimal)", async ({ mount, page }) => {
-  await mount(<TeamCard as="div" portrait={PORTRAIT} name="Arian Zargaran" role="Founder" />);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

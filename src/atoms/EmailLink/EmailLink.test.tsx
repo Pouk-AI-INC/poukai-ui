@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Mail } from "lucide-react";
 import { EmailLink } from "./EmailLink";
 
@@ -132,44 +131,4 @@ test("forwards rel and target props", async ({ mount }) => {
   await expect(component).toHaveAttribute("target", "_blank");
 });
 
-/* ---------- a11y ---------- */
-
-test("a11y — default variant", async ({ mount, page }) => {
-  await mount(<EmailLink email="hello@pouk.ai" />);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — with icon (aria-hidden on icon)", async ({ mount, page }) => {
-  await mount(<EmailLink email="hello@pouk.ai" icon={<Mail size={14} aria-hidden="true" />} />);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — with qualifier", async ({ mount, page }) => {
-  await mount(<EmailLink email="founder@pouk.ai" qualifier="Arian" />);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — muted variant", async ({ mount, page }) => {
-  await mount(<EmailLink email="hello@pouk.ai" variant="muted" />);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — label override", async ({ mount, page }) => {
-  await mount(<EmailLink email="hello@pouk.ai" label="Contact us" />);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

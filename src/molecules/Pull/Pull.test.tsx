@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Pull } from "./Pull";
 
 /* ---------- Root element ---------- */
@@ -112,48 +111,4 @@ test("renders children as body text", async ({ mount }) => {
   ).toBeVisible();
 });
 
-/* ---------- a11y ---------- */
-
-test("a11y — default blockquote with body only", async ({ mount, page }) => {
-  await mount(<Pull>The smallest real deployment teaches more than six months of staging.</Pull>);
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — blockquote with attribution footer", async ({ mount, page }) => {
-  await mount(
-    <Pull attribution="— from §3, Engineering culture">
-      Pilots fail because they are rehearsals.
-    </Pull>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — aside variant with attribution p", async ({ mount, page }) => {
-  await mount(
-    <Pull as="aside" attribution="— from §3, Engineering culture">
-      Pilots fail because they are rehearsals.
-    </Pull>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — sans variant", async ({ mount, page }) => {
-  await mount(
-    <Pull variant="sans" attribution="— from §3, Engineering culture">
-      The smallest real deployment teaches more than six months of staging.
-    </Pull>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */

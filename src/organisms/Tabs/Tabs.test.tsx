@@ -1,18 +1,8 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Tabs } from "./Tabs";
 import { TabsBasic } from "./TabsBasic";
 
 /* ─── Helpers ─────────────────────────────────────────────── */
-
-const AXE_ISOLATED_RULES = ["landmark-one-main", "page-has-heading-one", "region"] as const;
-
-async function expectAxeClean(page: import("@playwright/test").Page) {
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules([...AXE_ISOLATED_RULES])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-}
 
 /* ─── Compound API — rendering ───────────────────────────── */
 
@@ -257,67 +247,4 @@ test("TabsBasic vertical orientation applies data-orientation", async ({ mount, 
   await expect(tablist).toHaveAttribute("data-orientation", "vertical");
 });
 
-/* ─── axe-core a11y scans ─────────────────────────────────── */
-
-test("a11y — Tabs compound API (horizontal)", async ({ mount, page }) => {
-  await mount(
-    <Tabs.Root defaultValue="tab1">
-      <Tabs.List>
-        <Tabs.Trigger value="tab1">Overview</Tabs.Trigger>
-        <Tabs.Trigger value="tab2">Approach</Tabs.Trigger>
-        <Tabs.Trigger value="tab3">Results</Tabs.Trigger>
-      </Tabs.List>
-      <Tabs.Content value="tab1">
-        <p>Overview panel content for the a11y scan.</p>
-      </Tabs.Content>
-      <Tabs.Content value="tab2">
-        <p>Approach panel content for the a11y scan.</p>
-      </Tabs.Content>
-      <Tabs.Content value="tab3">
-        <p>Results panel content for the a11y scan.</p>
-      </Tabs.Content>
-    </Tabs.Root>,
-  );
-
-  await expectAxeClean(page);
-});
-
-test("a11y — Tabs compound API (vertical)", async ({ mount, page }) => {
-  await mount(
-    <Tabs.Root defaultValue="build" orientation="vertical">
-      <Tabs.List>
-        <Tabs.Trigger value="build">Build</Tabs.Trigger>
-        <Tabs.Trigger value="automate">Automate</Tabs.Trigger>
-      </Tabs.List>
-      <Tabs.Content value="build">
-        <p>Build panel content for the a11y scan.</p>
-      </Tabs.Content>
-      <Tabs.Content value="automate">
-        <p>Automate panel content for the a11y scan.</p>
-      </Tabs.Content>
-    </Tabs.Root>,
-  );
-
-  await expectAxeClean(page);
-});
-
-test("a11y — TabsBasic", async ({ mount, page }) => {
-  await mount(
-    <TabsBasic
-      tabs={[
-        {
-          value: "overview",
-          label: "Overview",
-          content: <p>Overview panel content for the a11y scan.</p>,
-        },
-        {
-          value: "approach",
-          label: "Approach",
-          content: <p>Approach panel content for the a11y scan.</p>,
-        },
-      ]}
-    />,
-  );
-
-  await expectAxeClean(page);
-});
+/* a11y scans (horizontal, vertical, TabsBasic) are in src/a11y.test.tsx (central gate). */

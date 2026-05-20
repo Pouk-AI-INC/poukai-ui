@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Statement } from "./Statement";
 
 test("renders statement text", async ({ mount }) => {
@@ -78,10 +77,5 @@ test("axe a11y: no violations on full variant", async ({ mount, page }) => {
       supporting="For teams who'd rather ship than speculate."
     />,
   );
-  // Suppress document-level best-practice rules that fire in isolated CT mounts
-  // (no <main>, no <h1>) — same pattern as src/a11y.test.tsx.
-  const results = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(results.violations).toEqual([]);
+  // a11y scan is in src/a11y.test.tsx (central gate).
 });

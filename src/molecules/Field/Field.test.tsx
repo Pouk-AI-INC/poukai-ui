@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/experimental-ct-react";
-import AxeBuilder from "@axe-core/playwright";
 import { Field } from "./Field";
 import { Input } from "../Input/Input";
 import { Textarea } from "../Textarea/Textarea";
@@ -203,52 +202,4 @@ test("forwards ref to root div", async ({ mount }) => {
   expect(tagName).toBe("div");
 });
 
-/* ---------- a11y ---------- */
-
-test("a11y — Field + Input (email)", async ({ mount, page }) => {
-  await mount(
-    <Field label="Email address" id="a11y-field-email" helper="We'll never share your email.">
-      <Input type="email" placeholder="you@example.com" />
-    </Field>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — Field + Textarea (message)", async ({ mount, page }) => {
-  await mount(
-    <Field label="Message" id="a11y-field-message" helper="Tell us about your project.">
-      <Textarea placeholder="Your message…" />
-    </Field>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — Field with error state", async ({ mount, page }) => {
-  await mount(
-    <Field label="Email address" id="a11y-field-error" error="Please enter a valid email address.">
-      <Input type="email" defaultValue="bad-email" />
-    </Field>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
-
-test("a11y — Field required + Input", async ({ mount, page }) => {
-  await mount(
-    <Field label="Full name" id="a11y-field-required" required>
-      <Input placeholder="Arian Zargaran" />
-    </Field>,
-  );
-  const { violations } = await new AxeBuilder({ page })
-    .disableRules(["landmark-one-main", "page-has-heading-one", "region"])
-    .analyze();
-  expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
-});
+/* a11y scans are in src/a11y.test.tsx (central gate). */
