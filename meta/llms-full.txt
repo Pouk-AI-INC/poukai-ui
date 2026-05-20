@@ -25,6 +25,15 @@ All tokens live in `src/tokens/tokens.css` on `:root`. Owned exclusively by `pou
 - `--fg-on-warm: #fdf5f0` — Primary text on warm bands. Warm-tinted near-white. The only text color permitted as primary copy over `--bg-warm-accent`. NEVER use over `--bg`.
 - `--fg-on-warm-muted: #f5ddd0` — Supporting text on warm bands. Use sparingly; see `meta/brand.md` for the contrast ceiling. NEVER use as primary copy.
 
+**Status color tier — product feedback only (NOT editorial brand).** Six tokens for error/warning state surfaces (Banner danger/warning tones, Form invalid borders, future Toast). Distinct from `--bg-warm-accent` (editorial brand orange) by hue: danger is true red, warning is amber/ochre.
+
+- `--danger: #b3261e` — True red. Used by Form invalid border (`Input`/`Textarea`/`Field` `[aria-invalid="true"]`), Banner danger left-rule, future destructive button variant. WCAG AA on `--bg` (#FBFBFD): ~7.0:1. NEVER use as surface fill, body text, or non-error indicator.
+- `--bg-danger: #fef0f0` — Tinted page-tier surface (subtle pink). Used by Banner danger background. NEVER use as primary page background; this is reserved for the danger-banner surface.
+- `--fg-on-danger: #5c1310` — Deep oxblood for text on `--bg-danger` (~9.1:1). Use only on `--bg-danger` surfaces.
+- `--warning: #b46100` — Amber/ochre. Used by Banner warning left-rule, future caution indicators. Distinct from `--bg-warm-accent` (#C0452C, brick-red editorial) — different hue family. WCAG AA on `--bg` (#FBFBFD): ~4.6:1.
+- `--bg-warning: #fff7e6` — Tinted page-tier surface (light cream). Used by Banner warning background. NEVER substitute for `--bg-warm-accent`; the warm-accent band is editorial, this is product feedback.
+- `--fg-on-warning: #4a2900` — Deep brown for text on `--bg-warning` (~10.2:1). Use only on `--bg-warning` surfaces.
+
 **Elevation rhythm.** Four steps, low to high: `--surface (#F5F5F7) < --surface-section (#F8F8FA) < --bg (#FBFBFD) < --bg-elevated (#FFFFFF)`. Use `--surface` for recessed inline elements (code blocks, quote blocks, card fills). Use `--surface-section` for full-width alternating section bands on editorial pages — this is the only tier permitted as a section divider. Use `--bg` for the page canvas and page-level content. Use `--bg-elevated` for overlays that must read as front-most. Never skip steps. Never use `--surface` as a section divider.
 
 **Never pure edges.** `--fg` is never `#000000`; `--bg` is never pure `#FFFFFF`. Both ends of the neutral ramp pull in slightly — this gives elevation headroom on the page and ensures the palette inverts cleanly to dark mode without losing its restraint. Treat any spec or hardcoded value that implies a pure edge as a brand-level escalation.
